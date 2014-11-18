@@ -302,5 +302,5 @@ Makefile*
 
 
 ### Project Specific ###
-debug/
-release/
+/app/app
+/tests/*/*_test

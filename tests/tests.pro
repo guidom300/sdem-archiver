@@ -1,3 +1,5 @@
 TEMPLATE = subdirs
 
-SUBDIRS = template
+SUBDIRS += \
+    bit_writer \
+    lz77_naive_dictionary
