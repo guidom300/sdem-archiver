@@ -302,5 +302,6 @@ Makefile*
 
 
 ### Project Specific ###
+*.xcodeproj/
 /app/app
 /tests/*/*_test
