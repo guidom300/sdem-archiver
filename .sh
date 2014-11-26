@@ -16,3 +16,5 @@ alias find_xcodeproj="find . -type d -name '*.xcodeproj'"
 rm_xcode_projects() {
     rm -rv $(find_xcodeproj)
 }
+
+alias format_code="clang-format -i \$(find . -type f -name '*.h' -o -name '*.hpp' -o -name '*.cc' -o -name '*.cpp')"
