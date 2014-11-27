@@ -7,15 +7,18 @@
 template <typename OutputIterator = std::ostreambuf_iterator<char>>
 class BitWriter {
  public:
-  explicit BitWriter(const OutputIterator &output_iterator)
+  explicit BitWriter(const OutputIterator& output_iterator)
       : _output_iterator(output_iterator), _buffer(0), _count(8) {}
 
   template <typename Sink>
-  explicit BitWriter(Sink &sink)
+  explicit BitWriter(Sink& sink)
       : BitWriter(OutputIterator(sink)) {}
 
   template <typename V>
   void write(V value, bits_t bits = 8 * sizeof(V));
+
+  template <typename Bitset>
+  void write_bitset(const Bitset& bitset);
 
   bool empty() const { return _count == 8; }
 
@@ -41,6 +44,8 @@ class BitWriter {
     _buffer = 0;
     _count = 8;
   }
+
+  void process(bool bit);
 };
 
 template <typename OutputIterator>
@@ -51,17 +56,30 @@ inline void BitWriter<OutputIterator>::write(V value, bits_t bits) {
   value <<= 8 * sizeof(V) - bits;
 
   while (bits--) {
-    _buffer <<= 1;
-
-    if (value & mask) {
-      ++_buffer;
-    }
+    process(value & mask);
 
     value <<= 1;
+  }
+}
 
-    if (--_count == 0) {
-      write_buffer();
-    }
+template <typename OutputIterator>
+template <typename Bitset>
+inline void BitWriter<OutputIterator>::write_bitset(const Bitset& bitset) {
+  for (auto bit : bitset) {
+    process(bit);
+  }
+}
+
+template <typename OutputIterator>
+inline void BitWriter<OutputIterator>::process(bool bit) {
+  _buffer <<= 1;
+
+  if (bit) {
+    ++_buffer;
+  }
+
+  if (--_count == 0) {
+    write_buffer();
   }
 }
 

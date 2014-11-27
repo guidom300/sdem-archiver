@@ -6,8 +6,6 @@
 #include "lz77_naive_dictionary.h"
 #include "bit_writer.h"
 
-static inline constexpr size_t max_size(size_t bits) { return (1 << bits) - 1; }
-
 template <bits_t position_bits,
           bits_t length_bits,
           size_t max_dictionary_size = max_size(position_bits),
