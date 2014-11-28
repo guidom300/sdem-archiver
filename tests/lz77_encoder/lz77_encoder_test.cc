@@ -35,10 +35,9 @@ void LZ77EncoderTest::testCase1() {
   int steps = encoder(
       char_input.cbegin(), char_input.cend(), back_inserter(encoded_stream));
 
-  for (auto it = encoded_stream.begin(); it != encoded_stream.end(); ++it) {
-    char ch = *it;
+  for (auto&& ch : encoded_stream) {
     if (ch < 'a') {
-      *it = ch + '0';
+      ch += '0';
     }
   }
 
