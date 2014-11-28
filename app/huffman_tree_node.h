@@ -13,7 +13,12 @@ struct HuffmanData {
 
   explicit HuffmanData(const W& _weight) : symbol(), weight(_weight) {}
 
-  bool operator<(const HuffmanData& rhs) const { return weight < rhs.weight; }
+  bool operator<(const HuffmanData& rhs) const {
+    if (weight == rhs.weight) {
+      return symbol < rhs.symbol;
+    }
+    return weight < rhs.weight;
+  }
 
   T symbol;
 
@@ -29,7 +34,8 @@ struct HuffmanTreeNode : TreeNode<HuffmanData<T, W>> {
   typedef typename base_type::ptr_type ptr_type;
   typedef typename base_type::data_type data_type;
 
-  explicit HuffmanTreeNode(const data_type& data) : base_type(data) {}
+  explicit HuffmanTreeNode(const data_type& data = data_type())
+      : base_type(data) {}
 
   explicit HuffmanTreeNode(ptr_type left, ptr_type right)
       : base_type(data_type(left->data.weight + right->data.weight)) {}

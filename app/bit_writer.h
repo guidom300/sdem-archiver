@@ -65,7 +65,7 @@ inline void BitWriter<OutputIterator>::write(V value, bits_t bits) {
 template <typename OutputIterator>
 template <typename Bitset>
 inline void BitWriter<OutputIterator>::write_bitset(const Bitset& bitset) {
-  for (auto bit : bitset) {
+  for (auto&& bit : bitset) {
     process(bit);
   }
 }
