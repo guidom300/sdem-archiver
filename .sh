@@ -25,20 +25,29 @@ which_gnu_sed() {
     fi
 }
 
+capitalize_words() {
+    echo "$1" | $(which_gnu_sed) 's/[^ _-]*/\u&/g' | tr -d ' _-'
+}
+
 scaffold_test() {
     local name="$(echo $1 | tr '[:upper:]' '[:lower:]')"
     local template="template"
     local sed=$(which_gnu_sed)
 
-    if [ -z "$name" -o "$name" = "$template" ]; then
+    if [ -z "$name" ]; then
         echo "Usage: $0 test_name"
-        echo "'test_name' cannot be '$template'"
-        exit 1
+        return 1
     fi
 
     local src_dir="tests/$template"
     local dst_dir="tests/$name"
-    mkdir "$dst_dir"
+
+    if [ -d "$dst_dir" ]; then
+        echo "$dst_dir already exists"
+        return 2
+    else
+        mkdir "$dst_dir"
+    fi
 
     local pro_src="$src_dir/${template}.pro"
     local pro_dst="$dst_dir/${name}.pro"
@@ -46,12 +55,10 @@ scaffold_test() {
     local cc_dst="$dst_dir/${name}_test.cc"
 
     $sed "s/$template/$name/" "$pro_src" > "$pro_dst"
-    $sed "s/$template/$name/" "$cc_src" > "$cc_dst"
+    $sed "s/$template/$name/" "$cc_src" |\
+        $sed "s/$(capitalize_words $template)/$(capitalize_words $name)/" > "$cc_dst"
 
-    capitalize_words() {
-        echo "$1" | $sed 's/[^ _-]*/\u&/g' | tr -d ' _-'
-    }
-    $sed "s/$(capitalize_words $template)/$(capitalize_words $name)/" "$cc_dst" -i
+    $sed -r -i 's/^ +([^ ]+)$/    \1 \\\n    '"$name/" tests/tests.pro
 }
 
 remove_trailing_whitespaces() {
