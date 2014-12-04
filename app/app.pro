@@ -18,6 +18,7 @@ HEADERS += \
     huffman_tree.h \
     huffman_tree_base.h \
     huffman_tree_node.h \
+    lz77_boyer_moore_dictionary.h \
     lz77_encoder.h \
     lz77_naive_dictionary.h \
     tree_node.h \
