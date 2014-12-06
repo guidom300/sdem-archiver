@@ -35,14 +35,14 @@ void LZ77NaiveDictionaryTest::testFindMatch() {
   QFETCH(size_t, position);
   QFETCH(size_t, length);
 
-  LZ77NaiveDictionary<8, QChar> dictionary(dictionary_content.cbegin(),
-                                           dictionary_content.cend());
+  LZ77NaiveDictionary<8, 100, QChar> dictionary(dictionary_content.cbegin(),
+                                                dictionary_content.cend());
 
   auto match =
       dictionary.find_match(lookahead_buffer.cbegin(), lookahead_buffer.cend());
 
-  QCOMPARE(match.position, position);
-  QCOMPARE(match.length, length);
+  QCOMPARE(static_cast<size_t>(match.position), position);
+  QCOMPARE(static_cast<size_t>(match.length), length);
 }
 
 void LZ77NaiveDictionaryTest::testFindMatch_data() {

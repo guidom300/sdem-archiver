@@ -3,21 +3,21 @@
 
 #include <deque>
 #include "utils.h"
-#include "lz77_naive_dictionary.h"
 #include "bit_writer.h"
+#include "lz77_boyer_moore_dictionary.h"
 
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size = max_size(position_bits),
-          size_t max_lookahead_buffer_size = max_size(length_bits),
-          typename T = char,
-          typename L = std::deque<T>,
-          typename D = LZ77NaiveDictionary<max_dictionary_size, T>>
+template <
+    bits_t position_bits,
+    bits_t length_bits,
+    size_t max_dictionary_size = max_size(position_bits),
+    size_t max_lookahead_buffer_size = max_size(length_bits),
+    typename T = char,
+    template <size_t, size_t, typename> class D = LZ77BoyerMooreDictionary>
 class LZ77Encoder {
  public:
   typedef T symbol_type;
-  typedef L lookahead_buffer_type;
-  typedef D dictionary_type;
+  typedef std::deque<T> lookahead_buffer_type;
+  typedef D<max_dictionary_size, max_lookahead_buffer_size, T> dictionary_type;
 
   template <typename InputIterator, typename OutputIterator>
   size_t operator()(InputIterator begin,
@@ -39,15 +39,13 @@ template <bits_t position_bits,
           size_t max_dictionary_size,
           size_t max_lookahead_buffer_size,
           typename T,
-          typename L,
-          typename D>
+          template <size_t, size_t, typename> class D>
 template <typename InputIterator, typename OutputIterator>
 size_t LZ77Encoder<position_bits,
                    length_bits,
                    max_dictionary_size,
                    max_lookahead_buffer_size,
                    T,
-                   L,
                    D>::
 operator()(InputIterator begin,
            InputIterator end,
@@ -98,14 +96,12 @@ template <bits_t position_bits,
           size_t max_dictionary_size,
           size_t max_lookahead_buffer_size,
           typename T,
-          typename L,
-          typename D>
+          template <size_t, size_t, typename> class D>
 inline void LZ77Encoder<position_bits,
                         length_bits,
                         max_dictionary_size,
                         max_lookahead_buffer_size,
                         T,
-                        L,
                         D>::clear() {
   _lookahead_buffer.clear();
   _dictionary.clear();
@@ -116,14 +112,12 @@ template <bits_t position_bits,
           size_t max_dictionary_size,
           size_t max_lookahead_buffer_size,
           typename T,
-          typename L,
-          typename D>
+          template <size_t, size_t, typename> class D>
 inline void LZ77Encoder<position_bits,
                         length_bits,
                         max_dictionary_size,
                         max_lookahead_buffer_size,
                         T,
-                        L,
                         D>::slide_window(size_t length) {
   auto begin = _lookahead_buffer.begin();
   auto end = begin + length;
