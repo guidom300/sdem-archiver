@@ -3,23 +3,25 @@
 
 #include <cstddef>
 #include <deque>
+#include "utils.h"
 
-template <size_t max_size, typename T>
+template <size_t max_dictionary_size,
+          size_t max_lookahead_buffer_size,
+          typename T>
 class LZ77NaiveDictionary {
  public:
   LZ77NaiveDictionary() = default;
 
   template <typename InputIterator>
-  LZ77NaiveDictionary(InputIterator first, InputIterator last)
-      : _dictionary(first, last) {}
+  LZ77NaiveDictionary(InputIterator first, InputIterator last) {
+    slide_window(first, last);
+  }
 
-  struct match_type {
-    size_t position;
-    size_t length = 0;
-  };
+  typedef match_type<max_dictionary_size, max_lookahead_buffer_size> match_type;
 
-  template <typename ForwardIterator>
-  match_type find_match(ForwardIterator begin, ForwardIterator end) const;
+  template <typename BidirectionalIterator>
+  match_type find_match(BidirectionalIterator begin,
+                        BidirectionalIterator end) const;
 
   void clear();
 
@@ -30,75 +32,73 @@ class LZ77NaiveDictionary {
   std::deque<T> _dictionary;
 };
 
-template <size_t max_size, typename T>
-template <typename ForwardIterator>
-typename LZ77NaiveDictionary<max_size, T>::match_type
-LZ77NaiveDictionary<max_size, T>::find_match(ForwardIterator begin,
-                                             ForwardIterator end) const {
+template <size_t max_dictionary_size,
+          size_t max_lookahead_buffer_size,
+          typename T>
+template <typename BidirectionalIterator>
+typename LZ77NaiveDictionary<max_dictionary_size,
+                             max_lookahead_buffer_size,
+                             T>::match_type
+LZ77NaiveDictionary<max_dictionary_size,
+                    max_lookahead_buffer_size,
+                    T>::find_match(BidirectionalIterator begin,
+                                   BidirectionalIterator end) const {
   // Find a match (without repetition)
-  auto first1 = _dictionary.cbegin();
-  auto last1 = _dictionary.cend();
-  auto first2 = begin;
-  auto last2 = end;
+  auto dictionary_current = _dictionary.cbegin();
+  auto dictionary_end = _dictionary.cend();
 
-  auto pos = first1;
+  auto pos = dictionary_current;
   match_type match;
 
-  while (first1 != last1) {
-    auto it1 = first1;
-    auto it2 = first2;
+  while (dictionary_current != dictionary_end) {
+    auto it1 = dictionary_current;
+    auto it2 = begin;
     decltype(match.length) current_length = 0;
 
-    while (it1 != last1 && it2 != last2 && *it1 == *it2) {
+    while (it1 != dictionary_end && it2 != end && *it1 == *it2) {
       ++current_length;
       ++it1;
       ++it2;
     }
 
     if (current_length >= match.length) {
-      pos = first1;
+      pos = dictionary_current;
       match.length = current_length;
     }
 
-    ++first1;
+    ++dictionary_current;
   }
 
-  match.position = last1 - pos;
+  match.position = dictionary_end - pos;
 
-  // Check for repetition
-  if (match.length > 0 && match.position == match.length) {
-    first1 = _dictionary.cend() - match.position;
-    first2 += match.length;
-    last2 = end;
-
-    size_t count = 0;
-    while (first2 != last2 &&
-           *(first1 + (count % match.position)) == *(first2)) {
-      ++count;
-      ++first2;
-    }
-
-    match.length += count;
-  }
+  match.check_repetition(_dictionary.cend() - match.position, begin, end);
 
   return match;
 }
 
-template <size_t max_size, typename T>
-inline void LZ77NaiveDictionary<max_size, T>::clear() {
+template <size_t max_dictionary_size,
+          size_t max_lookahead_buffer_size,
+          typename T>
+inline void LZ77NaiveDictionary<max_dictionary_size,
+                                max_lookahead_buffer_size,
+                                T>::clear() {
   _dictionary.clear();
 }
 
-template <size_t max_size, typename T>
+template <size_t max_dictionary_size,
+          size_t max_lookahead_buffer_size,
+          typename T>
 template <typename InputIterator>
-inline void LZ77NaiveDictionary<max_size, T>::slide_window(InputIterator begin,
-                                                           InputIterator end) {
+inline void LZ77NaiveDictionary<max_dictionary_size,
+                                max_lookahead_buffer_size,
+                                T>::slide_window(InputIterator begin,
+                                                 InputIterator end) {
   _dictionary.insert(_dictionary.end(), begin, end);
 
   auto size = _dictionary.size();
-  if (size > max_size) {
+  if (size > max_dictionary_size) {
     auto dbegin = _dictionary.begin();
-    _dictionary.erase(dbegin, dbegin + (size - max_size));
+    _dictionary.erase(dbegin, dbegin + (size - max_dictionary_size));
   }
 }
 

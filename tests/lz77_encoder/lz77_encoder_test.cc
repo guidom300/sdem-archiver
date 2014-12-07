@@ -5,6 +5,7 @@
 #include <vector>
 #include <iterator>
 #include "lz77_encoder.h"
+#include "lz77_naive_dictionary.h"
 
 using std::string;
 using std::vector;
@@ -27,12 +28,12 @@ void LZ77EncoderTest::testCase1() {
   QFETCH(QString, input);
   QFETCH(QString, output);
 
-  LZ77Encoder<8, 8, 6, 4> encoder;
+  LZ77Encoder<8, 8, 6, 4, char, LZ77NaiveDictionary> encoder;
   vector<char> encoded_stream;
   string char_input(input.toStdString());
   string char_output(output.toStdString());
 
-  int steps = encoder(
+  auto steps = encoder(
       char_input.cbegin(), char_input.cend(), back_inserter(encoded_stream));
 
   for (auto&& ch : encoded_stream) {
@@ -41,7 +42,7 @@ void LZ77EncoderTest::testCase1() {
     }
   }
 
-  QCOMPARE(output.size(), steps * 3);
+  QCOMPARE(static_cast<decltype(steps)>(output.size()), steps * 3);
   QCOMPARE(encoded_stream.size(), (size_t)output.size());
   QCOMPARE(encoded_stream,
            vector<char>(char_output.begin(), char_output.end()));
