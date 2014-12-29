@@ -77,7 +77,7 @@ using UnsignedInteger = SmallestInteger<false,
                                         fits_in<max_value, uint64_t>()>;
 
 template <size_t max_dictionary_size, size_t max_lookahead_buffer_size>
-struct match_type {
+struct Match {
   typename UnsignedInteger<max_dictionary_size>::type position = 0;
   typename UnsignedInteger<max_lookahead_buffer_size>::type length = 0;
 

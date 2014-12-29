@@ -22,7 +22,7 @@ class LZ77BoyerMooreDictionary {
     slide_window(first, last);
   }
 
-  typedef match_type<max_dictionary_size, max_lookahead_buffer_size> match_type;
+  typedef Match<max_dictionary_size, max_lookahead_buffer_size> match_type;
 
   template <typename BidirectionalIterator>
   match_type find_match(BidirectionalIterator begin, BidirectionalIterator end);
