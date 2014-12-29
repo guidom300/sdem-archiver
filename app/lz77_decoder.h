@@ -45,9 +45,14 @@ operator()(InputIterator begin,
   BitReader<InputIterator> bit_reader(begin, end);
 
   while (times--) {
-    bits_t position = bit_reader.read(position_bits);
-    bits_t length = bit_reader.read(length_bits);
-    symbol_type symbol = bit_reader.read();
+    bits_t position;
+    bit_reader.read(position, position_bits);
+
+    bits_t length;
+    bit_reader.read(length, length_bits);
+
+    symbol_type symbol;
+    bit_reader.read(symbol);
 
     if (!bit_reader) {
       break;
