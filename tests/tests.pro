@@ -7,4 +7,5 @@ SUBDIRS += \
     huffman_tree \
     canonical_huffman_tree \
     lz77_boyer_moore_dictionary \
-    bit_reader
+    bit_reader \
+    lz77_decoder

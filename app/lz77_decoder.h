@@ -44,7 +44,7 @@ operator()(InputIterator begin,
            size_t times) {
   BitReader<InputIterator> bit_reader(begin, end);
 
-  while (times--) {
+  while (times-- && bit_reader) {
     bits_t position;
     bit_reader.read(position, position_bits);
 
@@ -54,15 +54,11 @@ operator()(InputIterator begin,
     symbol_type symbol;
     bit_reader.read(symbol);
 
-    if (!bit_reader) {
-      break;
-    }
-
     for (size_t i = _dictionary.size() - position, j = 0; j < length; ++j) {
       write_symbol(output_iterator, _dictionary[i + (j % position)]);
     }
 
-    write_symbol(symbol);
+    write_symbol(output_iterator, symbol);
 
     resize_dictionary();
   }
