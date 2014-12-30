@@ -1,7 +1,6 @@
 #include <QtTest>
 #include <QString>
 #include <string>
-#include <sstream>
 #include <vector>
 #include <iterator>
 #include "lz77_encoder.h"
