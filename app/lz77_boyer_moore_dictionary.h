@@ -35,12 +35,11 @@ class LZ77BoyerMooreDictionary {
  private:
   std::deque<T> _dictionary;
 
-  typedef typename Integer<max_lookahead_buffer_size>::type signed_type;
+  typedef typename Integer<max_dictionary_size>::type signed_type;
   typedef std::vector<signed_type> signed_table_type;
   signed_table_type _bad_character_table;
 
-  typedef typename UnsignedInteger<max_lookahead_buffer_size>::type
-      unsigned_type;
+  typedef typename UnsignedInteger<max_dictionary_size>::type unsigned_type;
   typedef std::vector<unsigned_type> unsigned_table_type;
   unsigned_table_type _suffix;
   unsigned_table_type _good_suffix_table;

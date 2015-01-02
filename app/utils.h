@@ -12,7 +12,7 @@ inline constexpr size_t max_size(size_t bits) { return (1 << bits) - 1; }
 
 template <size_t value, typename IntegerType>
 constexpr bool fits_in() {
-  return value < std::numeric_limits<IntegerType>::max();
+  return value <= std::numeric_limits<IntegerType>::max();
 }
 
 template <bool Signed,
