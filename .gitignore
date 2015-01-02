@@ -321,3 +321,5 @@ cscope.po.out
 *.xcodeproj/
 /app/app
 /tests/*/*_test
+/cli/resources
+/cli/*/*coder
