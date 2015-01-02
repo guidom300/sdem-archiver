@@ -6,10 +6,7 @@
 #include "bit_reader.h"
 #include "utils.h"
 
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size = max_size(position_bits),
-          typename T = char>
+template <bits_t position_bits, bits_t length_bits, typename T = char>
 class LZ77Decoder {
  public:
   typedef T symbol_type;
@@ -26,36 +23,36 @@ class LZ77Decoder {
   typedef std::deque<T> dictionary_type;
   dictionary_type _dictionary;
 
+  static constexpr size_t max_dictionary_size = max_size(position_bits);
+  typedef Match<max_dictionary_size, max_size(length_bits)> match_type;
+
   template <typename OutputIterator>
   void write_symbol(OutputIterator& output_iterator, symbol_type symbol);
 
   void resize_dictionary();
 };
 
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size,
-          typename T>
+template <bits_t position_bits, bits_t length_bits, typename T>
 template <typename InputIterator, typename OutputIterator>
-inline void LZ77Decoder<position_bits, length_bits, max_dictionary_size, T>::
-operator()(InputIterator begin,
-           InputIterator end,
-           OutputIterator output_iterator,
-           size_t times) {
+inline void LZ77Decoder<position_bits, length_bits, T>::operator()(
+    InputIterator begin,
+    InputIterator end,
+    OutputIterator output_iterator,
+    size_t times) {
   BitReader<InputIterator> bit_reader(begin, end);
 
-  while (times-- && bit_reader) {
-    bits_t position;
-    bit_reader.read(position, position_bits);
-
-    bits_t length;
-    bit_reader.read(length, length_bits);
+  for (size_t steps = 0; steps < times && bit_reader; ++steps) {
+    match_type match;
+    bit_reader.read(match.position, position_bits);
+    bit_reader.read(match.length, length_bits);
 
     symbol_type symbol;
     bit_reader.read(symbol);
 
-    for (size_t i = _dictionary.size() - position, j = 0; j < length; ++j) {
-      write_symbol(output_iterator, _dictionary[i + (j % position)]);
+    for (size_t i = _dictionary.size() - match.position, j = 0;
+         j < match.length;
+         ++j) {
+      write_symbol(output_iterator, _dictionary[i + (j % match.position)]);
     }
 
     write_symbol(output_iterator, symbol);
@@ -64,24 +61,16 @@ operator()(InputIterator begin,
   }
 }
 
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size,
-          typename T>
+template <bits_t position_bits, bits_t length_bits, typename T>
 template <typename OutputIterator>
-inline void
-LZ77Decoder<position_bits, length_bits, max_dictionary_size, T>::write_symbol(
+inline void LZ77Decoder<position_bits, length_bits, T>::write_symbol(
     OutputIterator& output_iterator, symbol_type symbol) {
   *output_iterator = symbol;
   _dictionary.push_back(symbol);
 }
 
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size,
-          typename T>
-inline void LZ77Decoder<position_bits, length_bits, max_dictionary_size, T>::
-    resize_dictionary() {
+template <bits_t position_bits, bits_t length_bits, typename T>
+inline void LZ77Decoder<position_bits, length_bits, T>::resize_dictionary() {
   if (_dictionary.size() > max_dictionary_size) {
     _dictionary.erase(
         _dictionary.begin(),
