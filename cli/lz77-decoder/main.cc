@@ -18,9 +18,9 @@ int main(int argc, char** argv) {
   input_file >> noskipws;
 
   LZ77Decoder<12, 4> decoder;
-  decoder(std::istream_iterator<char>(input_file),
-          std::istream_iterator<char>(),
-          std::ostream_iterator<char>(output_file));
+  decoder(std::istreambuf_iterator<char>(input_file.rdbuf()),
+          std::istreambuf_iterator<char>(),
+          std::ostreambuf_iterator<char>(output_file));
 
   return 0;
 }

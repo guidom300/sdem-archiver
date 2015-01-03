@@ -19,14 +19,14 @@ int main(int argc, char** argv) {
 
   if (argc != 4) {
     LZ77Encoder<12, 4> encoder;
-    encoder(std::istream_iterator<char>(input_file),
-            std::istream_iterator<char>(),
-            std::ostream_iterator<char>(output_file));
+    encoder(std::istreambuf_iterator<char>(input_file.rdbuf()),
+            std::istreambuf_iterator<char>(),
+            std::ostreambuf_iterator<char>(output_file));
   } else {
     NaiveLZ77Encoder<12, 4> encoder;
-    encoder(std::istream_iterator<char>(input_file),
-            std::istream_iterator<char>(),
-            std::ostream_iterator<char>(output_file));
+    encoder(std::istreambuf_iterator<char>(input_file.rdbuf()),
+            std::istreambuf_iterator<char>(),
+            std::ostreambuf_iterator<char>(output_file));
   }
 
   return 0;
