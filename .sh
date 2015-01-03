@@ -81,3 +81,20 @@ update_project() {
     rm_xcode_projects
     generate_xcode_projects
 }
+
+cli_test() {
+    local algorithm=$1
+    local resource=$2
+    shift 2
+
+    local encoded=$resource.$algorithm-encoded
+    local decoded=$resource.$algorithm-decoded
+
+    echo Encoding... &&\
+        time cli/$algorithm-encoder/$algorithm-encoder $resource $encoded $* && \
+        echo Decoding... && \
+        time cli/$algorithm-decoder/$algorithm-decoder $encoded $decoded && \
+        diff $resource $decoded
+
+    rm -f $encoded $decoded
+}
