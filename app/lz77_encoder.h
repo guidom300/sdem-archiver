@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "bit_writer.h"
 #include "lz77_boyer_moore_dictionary.h"
+#include "lz77_naive_dictionary.h"
 
 template <
     bits_t position_bits,
@@ -33,6 +34,18 @@ class LZ77Encoder {
 
   void slide_window(size_t length);
 };
+
+template <bits_t position_bits,
+          bits_t length_bits,
+          size_t max_dictionary_size = max_size(position_bits),
+          size_t max_lookahead_buffer_size = max_size(length_bits),
+          typename T = char>
+using NaiveLZ77Encoder = LZ77Encoder<position_bits,
+                                     length_bits,
+                                     max_dictionary_size,
+                                     max_lookahead_buffer_size,
+                                     T,
+                                     LZ77NaiveDictionary>;
 
 template <bits_t position_bits,
           bits_t length_bits,

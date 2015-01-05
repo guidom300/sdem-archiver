@@ -22,7 +22,7 @@ class LZ77BoyerMooreDictionary {
     slide_window(first, last);
   }
 
-  typedef match_type<max_dictionary_size, max_lookahead_buffer_size> match_type;
+  typedef Match<max_dictionary_size, max_lookahead_buffer_size> match_type;
 
   template <typename BidirectionalIterator>
   match_type find_match(BidirectionalIterator begin, BidirectionalIterator end);
@@ -35,12 +35,11 @@ class LZ77BoyerMooreDictionary {
  private:
   std::deque<T> _dictionary;
 
-  typedef typename Integer<max_lookahead_buffer_size>::type signed_type;
+  typedef typename Integer<max_dictionary_size>::type signed_type;
   typedef std::vector<signed_type> signed_table_type;
   signed_table_type _bad_character_table;
 
-  typedef typename UnsignedInteger<max_lookahead_buffer_size>::type
-      unsigned_type;
+  typedef typename UnsignedInteger<max_dictionary_size>::type unsigned_type;
   typedef std::vector<unsigned_type> unsigned_table_type;
   unsigned_table_type _suffix;
   unsigned_table_type _good_suffix_table;
@@ -102,27 +101,31 @@ LZ77BoyerMooreDictionary<max_dictionary_size,
       // Partial match
       decltype(match.length) current_length = pattern_length - i - 1;
 
-      if (match.length <= current_length) {
+      if (match.length <= current_length && current_length > 0) {
         match.length = current_length;
 
         if (k < 0) {
           match.position = match.length;
+          match.check_repetition(
+              _dictionary.rend() - match.position, begin, end);
         } else {
-          match.position = j + match.length;
+          match.position = k + match.length + 1;
         }
       }
 
       // Jump ahead
       auto bad_character_shift =
-          _bad_character_table[_dictionary[i + j]] - pattern_length + 1 + i;
+          k >= 0
+              ? _bad_character_table[static_cast<unsigned char>(
+                    _dictionary[k])] -
+                    pattern_length + 1 + i
+              : 1;
 
       j += std::max(
           static_cast<decltype(bad_character_shift)>(_good_suffix_table[i]),
           bad_character_shift);
     }
   }
-
-  match.check_repetition(_dictionary.rend() - match.position, begin, end);
 
   return match;
 }
@@ -137,8 +140,9 @@ LZ77BoyerMooreDictionary<max_dictionary_size, max_lookahead_buffer_size, T>::
   _bad_character_table.assign(_bad_character_table.size(),
                               static_cast<signed_type>(pattern_length));
 
-  for (unsigned_type i = 0; i < pattern_length - 1; ++i, ++begin) {
-    _bad_character_table[*begin] = pattern_length - i - 1;
+  signed_type end = pattern_length - 1;
+  for (signed_type i = 0; i < end; ++i, ++begin) {
+    _bad_character_table[*begin] = end - i;
   }
 }
 

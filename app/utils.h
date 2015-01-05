@@ -12,7 +12,7 @@ inline constexpr size_t max_size(size_t bits) { return (1 << bits) - 1; }
 
 template <size_t value, typename IntegerType>
 constexpr bool fits_in() {
-  return value < std::numeric_limits<IntegerType>::max();
+  return value <= std::numeric_limits<IntegerType>::max();
 }
 
 template <bool Signed,
@@ -77,7 +77,7 @@ using UnsignedInteger = SmallestInteger<false,
                                         fits_in<max_value, uint64_t>()>;
 
 template <size_t max_dictionary_size, size_t max_lookahead_buffer_size>
-struct match_type {
+struct Match {
   typename UnsignedInteger<max_dictionary_size>::type position = 0;
   typename UnsignedInteger<max_lookahead_buffer_size>::type length = 0;
 

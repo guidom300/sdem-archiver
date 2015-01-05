@@ -14,8 +14,8 @@ class BitWriter {
   explicit BitWriter(Sink& sink)
       : BitWriter(OutputIterator(sink)) {}
 
-  template <typename V>
-  void write(V value, bits_t bits = 8 * sizeof(V));
+  template <typename T>
+  void write(T value, bits_t bits = 8 * sizeof(T));
 
   template <typename Bitset>
   void write_bitset(const Bitset& bitset);
@@ -49,11 +49,11 @@ class BitWriter {
 };
 
 template <typename OutputIterator>
-template <typename V>
-inline void BitWriter<OutputIterator>::write(V value, bits_t bits) {
-  static constexpr V mask = V(1) << (8 * sizeof(V) - 1);
+template <typename T>
+inline void BitWriter<OutputIterator>::write(T value, bits_t bits) {
+  static constexpr T mask = T(1) << (8 * sizeof(T) - 1);
 
-  value <<= 8 * sizeof(V) - bits;
+  value <<= 8 * sizeof(T) - bits;
 
   while (bits--) {
     process(value & mask);
