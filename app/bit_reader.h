@@ -18,7 +18,9 @@ class BitReader {
   template <typename T>
   void read(T& value, bits_t bits = 8 * sizeof(T));
 
-  operator bool() const { return _begin != _end; }
+  bool read();
+
+  operator bool() const { return _begin != _end || !empty(); }
 
   bool empty() const { return _count == 0; }
 
@@ -38,19 +40,27 @@ inline void BitReader<InputIterator>::read(T& value, bits_t bits) {
   while (bits--) {
     value <<= 1;
 
-    if (empty()) {
-      _buffer = *_begin;
-      ++_begin;
-      _count = 8;
-    }
-
-    if (_buffer & 0x80) {
+    if (read()) {
       ++value;
     }
-
-    --_count;
-    _buffer <<= 1;
   }
+}
+
+template <typename InputIterator>
+inline bool BitReader<InputIterator>::read() {
+  if (empty()) {
+    _buffer = *_begin;
+    ++_begin;
+    _count = 7;
+  } else {
+    --_count;
+  }
+
+  bool retval = _buffer & 0x80;
+
+  _buffer <<= 1;
+
+  return retval;
 }
 
 #endif /* BIT_READER_H */

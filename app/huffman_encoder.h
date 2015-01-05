@@ -101,7 +101,8 @@ void HuffmanEncoder<T, W>::dump_codebook(OutputIterator output_iterator) const {
 
   for (auto&& codebook_pair : _codebook) {
     bit_writer.write(codebook_pair.first);
-    bit_writer.write(static_cast<code_length_type>(codebook_pair.second.size()));
+    bit_writer.write(
+        static_cast<code_length_type>(codebook_pair.second.size()));
   }
 }
 
