@@ -2,8 +2,7 @@
 #include <fstream>
 #include <ios>
 #include <iterator>
-#include "canonical_huffman_tree.h"
-#include "huffman_decoder.h"
+#include "huffman_decoder_stack.h"
 
 using namespace std;
 
@@ -18,17 +17,10 @@ int main(int argc, char** argv) {
 
   input_file >> noskipws;
 
-  // Reconstruct the (canonical) Huffman tree
-  CanonicalHuffmanTree<char> tree(
-      std::istreambuf_iterator<char>(input_file.rdbuf()),
-      std::istreambuf_iterator<char>());
-
-  // Decode the input file
-  HuffmanDecoder<char> decoder(tree);
-
-  decoder(std::istreambuf_iterator<char>(input_file.rdbuf()),
-          std::istreambuf_iterator<char>(),
-          std::ostreambuf_iterator<char>(output_file));
+  HuffmanDecoderStack<char> decoder_stack;
+  decoder_stack(std::istreambuf_iterator<char>(input_file.rdbuf()),
+                std::istreambuf_iterator<char>(),
+                std::ostreambuf_iterator<char>(output_file));
 
   return 0;
 }
