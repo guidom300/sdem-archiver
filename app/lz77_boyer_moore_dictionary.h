@@ -14,7 +14,11 @@ class LZ77BoyerMooreDictionary {
   static constexpr size_t alphabet_size() { return 1 << 8 * sizeof(T); }
 
  public:
-  LZ77BoyerMooreDictionary() : _bad_character_table(alphabet_size()) {}
+  LZ77BoyerMooreDictionary() {
+    _bad_character_table.reserve(alphabet_size());
+    _suffix.reserve(max_lookahead_buffer_size);
+    _good_suffix_table.reserve(max_lookahead_buffer_size + 1);
+  }
 
   template <typename InputIterator>
   LZ77BoyerMooreDictionary(InputIterator first, InputIterator last)
@@ -56,6 +60,13 @@ class LZ77BoyerMooreDictionary {
   auto at(InputIterator it, Distance distance) -> decltype(*it) {
     std::advance(it, distance);
     return *it;
+  }
+
+  typedef typename UnsignedInteger<std::numeric_limits<T>::max()>::type
+      unsigned_symbol_type;
+
+  static unsigned_symbol_type to_index(const T& symbol) {
+    return static_cast<unsigned_symbol_type>(symbol);
   }
 };
 
@@ -116,8 +127,7 @@ LZ77BoyerMooreDictionary<max_dictionary_size,
       // Jump ahead
       auto bad_character_shift =
           k >= 0
-              ? _bad_character_table[static_cast<unsigned char>(
-                    _dictionary[k])] -
+              ? _bad_character_table[to_index(_dictionary[k])] -
                     pattern_length + 1 + i
               : 1;
 
@@ -137,12 +147,12 @@ template <typename InputIterator>
 inline void
 LZ77BoyerMooreDictionary<max_dictionary_size, max_lookahead_buffer_size, T>::
     preprocess_bad_character_rule(InputIterator begin, size_t pattern_length) {
-  _bad_character_table.assign(_bad_character_table.size(),
+  _bad_character_table.assign(alphabet_size(),
                               static_cast<signed_type>(pattern_length));
 
   signed_type end = pattern_length - 1;
   for (signed_type i = 0; i < end; ++i, ++begin) {
-    _bad_character_table[*begin] = end - i;
+    _bad_character_table[to_index(*begin)] = end - i;
   }
 }
 
@@ -195,9 +205,11 @@ inline void LZ77BoyerMooreDictionary<
     }
   }
 
-  for (unsigned_type i = 0; i <= pattern_length - 2; ++i) {
-    _good_suffix_table[pattern_length - 1 - _suffix[i]] =
-        static_cast<unsigned_type>(pattern_length - 1 - i);
+  if (pattern_length > 1) {
+    for (unsigned_type i = 0; i <= pattern_length - 2; ++i) {
+      _good_suffix_table[pattern_length - 1 - _suffix[i]] =
+          static_cast<unsigned_type>(pattern_length - 1 - i);
+    }
   }
 }
 
