@@ -91,9 +91,10 @@ cli_test() {
     local decoded=$resource.$algorithm-decoded
 
     echo Encoding... &&\
-        time cli/$algorithm-encoder/$algorithm-encoder $resource $encoded $* && \
+        bash -c "time cli/$algorithm-encoder/$algorithm-encoder $resource $encoded $*" && \
+        echo && \
         echo Decoding... && \
-        time cli/$algorithm-decoder/$algorithm-decoder $encoded $decoded && \
+        bash -c "time cli/$algorithm-decoder/$algorithm-decoder $encoded $decoded $*" && \
         diff $resource $decoded
 
     rm -f $encoded $decoded
