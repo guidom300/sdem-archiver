@@ -16,7 +16,10 @@ class BitReader {
       : BitReader(InputIterator(source)) {}
 
   template <typename T>
-  void read(T& value, bits_t bits = 8 * sizeof(T));
+  void read(T& value);
+
+  template <typename T>
+  void read(T& value, bits_t bits);
 
   bool read();
 
@@ -31,6 +34,20 @@ class BitReader {
   unsigned char _buffer;
   unsigned char _count;
 };
+
+template <typename InputIterator>
+template <typename T>
+inline void BitReader<InputIterator>::read(T& value) {
+  if (empty()) {
+    value = 0;
+    for (decltype(sizeof(T)) i = 0; i < sizeof(T); ++i) {
+      (reinterpret_cast<char*>(&value))[i] = *_begin;
+      ++_begin;
+    }
+  } else {
+    read(value, 8 * sizeof(T));
+  }
+}
 
 template <typename InputIterator>
 template <typename T>
