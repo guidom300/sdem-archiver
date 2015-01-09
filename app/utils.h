@@ -5,6 +5,8 @@
 #include <cstddef>
 #include <iterator>
 #include <limits>
+#include <mutex>
+#include <condition_variable>
 
 typedef uint_fast8_t bits_t;
 
@@ -102,6 +104,48 @@ struct Match {
       length += count;
     }
   }
+};
+
+template <typename T>
+class ThreadSafeCounter {
+ public:
+  ThreadSafeCounter(const T& value) : _value(value), _lock(_lock_mutex) {}
+
+  ThreadSafeCounter(const ThreadSafeCounter&) = delete;
+
+  T value() {
+    lock_guard_type lock_guard(_mutex);
+    return _value;
+  }
+
+  void increase() {
+    lock_guard_type lock_guard(_mutex);
+    ++_value;
+  }
+
+  void decrease() {
+    lock_guard_type lock_guard(_mutex);
+    --_value;
+  }
+
+  template <typename Predicate>
+  void wait(Predicate pred) {
+    _condition_variable.wait(_lock, pred);
+  }
+
+  void notify() { _condition_variable.notify_one(); }
+
+ private:
+  T _value;
+
+  typedef std::mutex mutex_type;
+  mutex_type _mutex;
+
+  std::condition_variable _condition_variable;
+  mutex_type _lock_mutex;
+  std::unique_lock<mutex_type> _lock;
+
+  typedef std::lock_guard<mutex_type> lock_guard_type;
 };
 
 #endif  // UTILS_H

@@ -17,23 +17,34 @@ class HuffmanDecoder {
   template <typename InputIterator, typename OutputIterator>
   void operator()(InputIterator begin,
                   InputIterator end,
-                  OutputIterator output_iterator);
+                  OutputIterator output_iterator,
+                  bool skip_header = false);
 
  private:
   typedef typename HuffmanTreeBase<T, W>::ptr_type ptr_type;
   ptr_type root;
+
+  size_t header_size() const;
 };
 
 template <typename T, typename W>
 template <typename InputIterator, typename OutputIterator>
 void HuffmanDecoder<T, W>::operator()(InputIterator begin,
                                       InputIterator end,
-                                      OutputIterator output_iterator) {
+                                      OutputIterator output_iterator,
+                                      bool skip_header) {
+  if (skip_header) {
+    std::advance(begin, header_size());
+  }
+
   BitReader<InputIterator> bit_reader(begin, end);
   BitWriter<OutputIterator> bit_writer(output_iterator);
   ptr_type current_node = root;
 
-  while (bit_reader) {
+  size_t bits_to_read;
+  bit_reader.read(bits_to_read);
+
+  while (bit_reader && bits_to_read--) {
     bool bit = bit_reader.read();
 
     if (bit) {
@@ -47,6 +58,11 @@ void HuffmanDecoder<T, W>::operator()(InputIterator begin,
       current_node = root;
     }
   }
+}
+
+template <>
+size_t HuffmanDecoder<char>::header_size() const {
+  return 256;
 }
 
 #endif /* HUFFMAN_DECODER_H */

@@ -14,7 +14,9 @@ struct HuffmanEncoderStack {
     HuffmanTree<T> tree(begin, end);
     HuffmanEncoder<T> encoder(tree);
     encoder.make_canonical();
-    encoder.dump_codebook(output_iterator);
+
+    encoder.dump_header(tree, output_iterator);
+
     encoder(begin, end, output_iterator);
   }
 
@@ -32,7 +34,7 @@ struct HuffmanEncoderStack {
     input_stream.seekg(0);
 
     output_iterator_t output_iterator(output_stream);
-    encoder.dump_codebook(output_iterator);
+    encoder.dump_header(tree, output_iterator);
 
     encoder(input_iterator_t(input_stream.rdbuf()),
             input_iterator_t(),

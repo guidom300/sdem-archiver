@@ -27,6 +27,8 @@ class BitReader {
 
   bool empty() const { return _count == 0; }
 
+  const InputIterator& next() const { return _begin; }
+
  private:
   InputIterator _begin;
   InputIterator _end;

@@ -12,6 +12,10 @@ class HuffmanTree : public HuffmanTreeBase<T, W> {
   template <typename InputIterator>
   HuffmanTree(InputIterator begin, InputIterator end);
 
+  W frequency(const T& symbol) const {
+    return _symbol_frequency_pairs.at(symbol);
+  }
+
  private:
   typedef HuffmanTreeBase<T, W> base_type;
   typedef typename base_type::node_type node_type;
@@ -23,22 +27,22 @@ class HuffmanTree : public HuffmanTreeBase<T, W> {
       return !(lhs->operator<(*rhs));
     }
   };
+
+  std::unordered_map<T, W> _symbol_frequency_pairs;
 };
 
 template <typename T, typename W>
 template <typename InputIterator>
 HuffmanTree<T, W>::HuffmanTree(InputIterator begin, InputIterator end) {
   // Count occurrences
-  std::unordered_map<T, W> symbol_frequency_pairs;
-
   for (; begin != end; ++begin) {
-    ++symbol_frequency_pairs[*begin];
+    ++_symbol_frequency_pairs[*begin];
   }
 
   // Create the tree
   std::priority_queue<ptr_type, std::vector<ptr_type>, node_comparator> queue;
 
-  for (auto&& pair : symbol_frequency_pairs) {
+  for (auto&& pair : _symbol_frequency_pairs) {
     queue.push(new node_type(data_type(pair.first, pair.second)));
   }
 

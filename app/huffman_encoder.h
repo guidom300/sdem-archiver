@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include "bit_writer.h"
+#include "huffman_tree.h"
 #include "canonical_huffman_tree.h"
 
 template <typename T, typename W = size_t>
@@ -36,7 +37,18 @@ class HuffmanEncoder {
   void make_canonical();
 
   template <typename OutputIterator>
+  void dump_encoded_bits(const HuffmanTree<T, W>& tree,
+                         OutputIterator output_iterator) const;
+
+  template <typename OutputIterator>
   void dump_codebook(OutputIterator output_iterator) const;
+
+  template <typename OutputIterator>
+  void dump_header(const HuffmanTree<T, W>& tree,
+                   OutputIterator output_iterator) const {
+    dump_codebook(output_iterator);
+    dump_encoded_bits(tree, output_iterator);
+  }
 
  private:
   codebook_type _codebook;
@@ -124,6 +136,20 @@ void HuffmanEncoder<char>::dump_codebook(OutputIterator output_iterator) const {
 
     bit_writer.write(length);
   }
+}
+
+template <typename T, typename W>
+template <typename OutputIterator>
+void HuffmanEncoder<T, W>::dump_encoded_bits(
+    const HuffmanTree<T, W>& tree, OutputIterator output_iterator) const {
+  size_t encoded_bits = 0;
+
+  for (auto&& pair : _codebook) {
+    encoded_bits += pair.second.size() * tree.frequency(pair.first);
+  }
+
+  BitWriter<OutputIterator> bit_writer(output_iterator);
+  bit_writer.write(encoded_bits);
 }
 
 #endif /* HUFFMAN_ENCODER_H */
