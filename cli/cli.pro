@@ -4,4 +4,6 @@ SUBDIRS += \
     lz77-encoder \
     lz77-decoder \
     huffman-encoder \
-    huffman-decoder
+    huffman-decoder \
+    parallel-encoder \
+    parallel-decoder
