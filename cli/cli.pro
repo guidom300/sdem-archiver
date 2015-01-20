@@ -6,4 +6,6 @@ SUBDIRS += \
     huffman-encoder \
     huffman-decoder \
     parallel-encoder \
-    parallel-decoder
+    parallel-decoder \
+    lzss-encoder \
+    lzss-decoder
