@@ -27,10 +27,12 @@ class LZ77Encoder {
 
   void clear();
 
- private:
-  typedef typename dictionary_type::match_type match_type;
+ protected:
   lookahead_buffer_type _lookahead_buffer;
   dictionary_type _dictionary;
+
+  template <typename InputIterator>
+  void fill_lookahead_buffer(InputIterator& begin, InputIterator& end);
 
   void slide_window(size_t length);
 };
@@ -67,15 +69,11 @@ operator()(InputIterator begin,
   size_t steps = 0;
 
   while (begin != end || !_lookahead_buffer.empty()) {
-    // Fill lookahead buffer
-    for (; begin != end && _lookahead_buffer.size() < max_lookahead_buffer_size;
-         ++begin) {
-      _lookahead_buffer.push_back(*begin);
-    }
+    fill_lookahead_buffer(begin, end);
 
     // Find a match
-    match_type match = _dictionary.find_match(_lookahead_buffer.cbegin(),
-                                              _lookahead_buffer.cend());
+    auto match = _dictionary.find_match(_lookahead_buffer.cbegin(),
+                                        _lookahead_buffer.cend());
 
     // Get the next character
     if (match.length == _lookahead_buffer.size()) {
@@ -118,6 +116,26 @@ inline void LZ77Encoder<position_bits,
                         D>::clear() {
   _lookahead_buffer.clear();
   _dictionary.clear();
+}
+
+template <bits_t position_bits,
+          bits_t length_bits,
+          size_t max_dictionary_size,
+          size_t max_lookahead_buffer_size,
+          typename T,
+          template <size_t, size_t, typename> class D>
+template <typename InputIterator>
+inline void LZ77Encoder<position_bits,
+                        length_bits,
+                        max_dictionary_size,
+                        max_lookahead_buffer_size,
+                        T,
+                        D>::fill_lookahead_buffer(InputIterator& begin,
+                                                  InputIterator& end) {
+  for (; begin != end && _lookahead_buffer.size() < max_lookahead_buffer_size;
+       ++begin) {
+    _lookahead_buffer.push_back(*begin);
+  }
 }
 
 template <bits_t position_bits,
