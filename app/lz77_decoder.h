@@ -6,16 +6,31 @@
 #include "bit_reader.h"
 #include "utils.h"
 
+template <size_t position_bits, size_t length_bits>
+struct LZ77MatchRetriever {
+  template <typename BitReader, typename MatchType, typename T>
+  bool operator()(BitReader& bit_reader, MatchType& match, T& symbol) const {
+    bit_reader.read(match.position, position_bits);
+    bit_reader.read(match.length, length_bits);
+    bit_reader.read(symbol);
+    return true;
+  }
+};
+
 template <bits_t position_bits, bits_t length_bits, typename T = char>
 class LZ77Decoder {
  public:
   typedef T symbol_type;
 
-  template <typename InputIterator, typename OutputIterator>
+  template <
+      typename InputIterator,
+      typename OutputIterator,
+      typename MatchRetriever = LZ77MatchRetriever<position_bits, length_bits>>
   void operator()(InputIterator begin,
                   InputIterator end,
                   OutputIterator output_iterator,
-                  size_t times = std::numeric_limits<size_t>::max());
+                  size_t times = std::numeric_limits<size_t>::max(),
+                  MatchRetriever match_retriever = MatchRetriever());
 
   void clear() { _dictionary.clear(); }
 
@@ -33,21 +48,22 @@ class LZ77Decoder {
 };
 
 template <bits_t position_bits, bits_t length_bits, typename T>
-template <typename InputIterator, typename OutputIterator>
+template <typename InputIterator,
+          typename OutputIterator,
+          typename MatchRetriever>
 inline void LZ77Decoder<position_bits, length_bits, T>::operator()(
     InputIterator begin,
     InputIterator end,
     OutputIterator output_iterator,
-    size_t times) {
+    size_t times,
+    MatchRetriever match_retriever) {
   BitReader<InputIterator> bit_reader(begin, end);
 
   for (size_t steps = 0; steps < times && bit_reader; ++steps) {
     match_type match;
-    bit_reader.read(match.position, position_bits);
-    bit_reader.read(match.length, length_bits);
-
     symbol_type symbol;
-    bit_reader.read(symbol);
+
+    bool append_symbol = match_retriever(bit_reader, match, symbol);
 
     for (size_t i = _dictionary.size() - match.position, j = 0;
          j < match.length;
@@ -55,7 +71,9 @@ inline void LZ77Decoder<position_bits, length_bits, T>::operator()(
       write_symbol(output_iterator, _dictionary[i + (j % match.position)]);
     }
 
-    write_symbol(output_iterator, symbol);
+    if (append_symbol) {
+      write_symbol(output_iterator, symbol);
+    }
 
     resize_dictionary();
   }

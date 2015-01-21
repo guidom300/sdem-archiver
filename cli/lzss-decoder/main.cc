@@ -1,16 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <ios>
-#include <iterator>
-#include "worker.h"
 #include "lzss_decoder.h"
 #include "decoder_wrapper.h"
-#include "huffman_decoder_stack.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
-  if (argc != 3) {
+  if (argc < 3) {
     cerr << "Usage: " << argv[0] << " input_file output_file\n";
     return 1;
   }
@@ -20,12 +17,8 @@ int main(int argc, char** argv) {
 
   input_file >> noskipws;
 
-  split<char, HuffmanDecoderStack<char>, DecoderWrapper<LZSSDecoder<12, 4>>>(
-      std::istreambuf_iterator<char>(input_file.rdbuf()),
-      std::istreambuf_iterator<char>(),
-      std::ostreambuf_iterator<char>(output_file),
-      8,
-      32 * 1024);
+  DecoderWrapper<LZSSDecoder<12, 4>> decoder;
+  decoder(input_file, output_file);
 
   return 0;
 }

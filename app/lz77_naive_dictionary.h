@@ -47,10 +47,11 @@ LZ77NaiveDictionary<max_dictionary_size,
   auto dictionary_current = _dictionary.cbegin();
   auto dictionary_end = _dictionary.cend();
 
-  auto pos = dictionary_current;
+  size_t current_position = _dictionary.size();
   match_type match;
 
-  while (dictionary_current != dictionary_end) {
+  for (; dictionary_current != dictionary_end;
+       ++dictionary_current, --current_position) {
     auto it1 = dictionary_current;
     auto it2 = begin;
     decltype(match.length) current_length = 0;
@@ -62,16 +63,16 @@ LZ77NaiveDictionary<max_dictionary_size,
     }
 
     if (current_length >= match.length) {
-      pos = dictionary_current;
+      match.position = current_position;
       match.length = current_length;
     }
-
-    ++dictionary_current;
   }
 
-  match.position = dictionary_end - pos;
-
   match.check_repetition(_dictionary.cend() - match.position, begin, end);
+
+  if (match.length == 0) {
+    match.position = 0;
+  }
 
   return match;
 }
