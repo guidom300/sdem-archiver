@@ -7,10 +7,16 @@
 static constexpr bool LZSS_ENCODED_FLAG = false;
 static constexpr bool LZSS_UNENCODED_FLAG = true;
 
+static constexpr size_t get_minimum_match_length(bits_t position_bits,
+                                                 bits_t length_bits) {
+  return (position_bits + length_bits) / 9 + 1;
+}
+
 template <
     bits_t position_bits,
     bits_t length_bits,
-    size_t minimum_match_length = (position_bits + length_bits) / 9 + 1,
+    size_t minimum_match_length =
+        get_minimum_match_length(position_bits, length_bits),
     size_t max_dictionary_size = max_size(position_bits),
     size_t max_lookahead_buffer_size =
         max_size(length_bits) + minimum_match_length,
@@ -31,7 +37,8 @@ class LZSSEncoder : public LZ77Encoder<position_bits,
 
 template <bits_t position_bits,
           bits_t length_bits,
-          size_t minimum_match_length = (position_bits + length_bits) / 9 + 2,
+          size_t minimum_match_length =
+              get_minimum_match_length(position_bits, length_bits),
           size_t max_dictionary_size = max_size(position_bits),
           size_t max_lookahead_buffer_size = max_size(length_bits),
           typename T = char>

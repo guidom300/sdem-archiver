@@ -24,7 +24,8 @@ struct LZSSMatchRetriever {
 
 template <bits_t position_bits,
           bits_t length_bits,
-          size_t minimum_match_length = (position_bits + length_bits) / 9 + 1,
+          size_t minimum_match_length =
+              get_minimum_match_length(position_bits, length_bits),
           typename T = char>
 class LZSSDecoder : public LZ77Decoder<position_bits, length_bits, T> {
  private:
