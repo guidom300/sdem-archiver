@@ -1,9 +1,6 @@
 #ifndef LZ77_BOYER_MOORE_DICTIONARY_H
 #define LZ77_BOYER_MOORE_DICTIONARY_H
 
-#include <algorithm>
-#include <deque>
-#include <iterator>
 #include <vector>
 #include "utils.h"
 
@@ -20,25 +17,12 @@ class LZ77BoyerMooreDictionary {
     _good_suffix_table.reserve(max_lookahead_buffer_size + 1);
   }
 
-  template <typename InputIterator>
-  LZ77BoyerMooreDictionary(InputIterator first, InputIterator last)
-      : LZ77BoyerMooreDictionary() {
-    slide_window(first, last);
-  }
-
   typedef Match<max_dictionary_size, max_lookahead_buffer_size> match_type;
 
-  template <typename BidirectionalIterator>
-  match_type find_match(BidirectionalIterator begin, BidirectionalIterator end);
-
-  void clear();
-
-  template <typename InputIterator>
-  void slide_window(InputIterator begin, InputIterator end);
+  template <typename Data>
+  match_type find_match(const Data& data);
 
  private:
-  std::deque<T> _dictionary;
-
   typedef typename Integer<max_dictionary_size>::type signed_type;
   typedef std::vector<signed_type> signed_table_type;
   signed_table_type _bad_character_table;
@@ -48,19 +32,11 @@ class LZ77BoyerMooreDictionary {
   unsigned_table_type _suffix;
   unsigned_table_type _good_suffix_table;
 
-  template <typename InputIterator>
-  void preprocess_bad_character_rule(InputIterator begin,
-                                     size_t pattern_length);
+  template <typename Data>
+  void preprocess_bad_character_rule(const Data& data);
 
-  template <typename BidirectionalIterator>
-  void preprocess_good_suffix_rule(BidirectionalIterator begin,
-                                   size_t pattern_length);
-
-  template <typename InputIterator, typename Distance>
-  auto at(InputIterator it, Distance distance) -> decltype(*it) {
-    std::advance(it, distance);
-    return *it;
-  }
+  template <typename Data>
+  void preprocess_good_suffix_rule(const Data& data);
 
   typedef typename UnsignedInteger<std::numeric_limits<T>::max()>::type
       unsigned_symbol_type;
@@ -73,33 +49,29 @@ class LZ77BoyerMooreDictionary {
 template <size_t max_dictionary_size,
           size_t max_lookahead_buffer_size,
           typename T>
-template <typename BidirectionalIterator>
+template <typename Data>
 typename LZ77BoyerMooreDictionary<max_dictionary_size,
                                   max_lookahead_buffer_size,
                                   T>::match_type
 LZ77BoyerMooreDictionary<max_dictionary_size,
                          max_lookahead_buffer_size,
-                         T>::find_match(BidirectionalIterator begin,
-                                        BidirectionalIterator end) {
-  // Reverse the (perceived) order of the lookahead buffer
-  typedef std::reverse_iterator<BidirectionalIterator> pattern_iterator_type;
-  pattern_iterator_type first(end);
-  pattern_iterator_type last(begin);
-
+                         T>::find_match(const Data& data) {
   // Preprocessing phase
-  auto pattern_length = std::distance(begin, end);
-
-  preprocess_bad_character_rule(first, pattern_length);
-  preprocess_good_suffix_rule(first, pattern_length);
+  preprocess_bad_character_rule(data);
+  preprocess_good_suffix_rule(data);
 
   // Searching phase
   match_type match;
-  signed_type size_diff = _dictionary.size() - pattern_length;
+  signed_type pattern_length = data.lookahead_buffer_size();
+  signed_type size_diff = data.dictionary_size() - pattern_length;
 
   for (signed_type i, j = 1 - pattern_length, k; j <= size_diff;) {
     i = pattern_length - 1;
     k = i + j;
-    for (; i >= 0 && k >= 0 && at(first, i) == _dictionary[k]; --i, --k)
+    for (; i >= 0 && k >= 0 &&
+               data.lookahead_buffer_reverse_at(i) ==
+                   data.dictionary_reverse_at(k);
+         --i, --k)
       ;
 
     if (i < 0) {
@@ -117,8 +89,9 @@ LZ77BoyerMooreDictionary<max_dictionary_size,
 
         if (k < 0) {
           match.position = match.length;
-          match.check_repetition(
-              _dictionary.rend() - match.position, begin, end);
+          match.check_repetition(data.dictionary_end() - match.position,
+                                 data.lookahead_buffer_begin(),
+                                 data.lookahead_buffer_end());
         } else {
           match.position = k + match.length + 1;
         }
@@ -127,7 +100,7 @@ LZ77BoyerMooreDictionary<max_dictionary_size,
       // Jump ahead
       auto bad_character_shift =
           k >= 0
-              ? _bad_character_table[to_index(_dictionary[k])] -
+              ? _bad_character_table[to_index(data.dictionary_reverse_at(k))] -
                     pattern_length + 1 + i
               : 1;
 
@@ -143,28 +116,32 @@ LZ77BoyerMooreDictionary<max_dictionary_size,
 template <size_t max_dictionary_size,
           size_t max_lookahead_buffer_size,
           typename T>
-template <typename InputIterator>
+template <typename Data>
 inline void
-LZ77BoyerMooreDictionary<max_dictionary_size, max_lookahead_buffer_size, T>::
-    preprocess_bad_character_rule(InputIterator begin, size_t pattern_length) {
+LZ77BoyerMooreDictionary<max_dictionary_size,
+                         max_lookahead_buffer_size,
+                         T>::preprocess_bad_character_rule(const Data& data) {
+  auto pattern_length = data.lookahead_buffer_size();
   _bad_character_table.assign(alphabet_size(),
                               static_cast<signed_type>(pattern_length));
 
   signed_type end = pattern_length - 1;
-  for (signed_type i = 0; i < end; ++i, ++begin) {
-    _bad_character_table[to_index(*begin)] = end - i;
+  auto it = data.lookahead_buffer_rbegin();
+  for (signed_type i = 0; i < end; ++i, ++it) {
+    _bad_character_table[to_index(*it)] = end - i;
   }
 }
 
 template <size_t max_dictionary_size,
           size_t max_lookahead_buffer_size,
           typename T>
-template <typename BidirectionalIterator>
-inline void LZ77BoyerMooreDictionary<
-    max_dictionary_size,
-    max_lookahead_buffer_size,
-    T>::preprocess_good_suffix_rule(BidirectionalIterator begin,
-                                    size_t pattern_length) {
+template <typename Data>
+inline void
+LZ77BoyerMooreDictionary<max_dictionary_size,
+                         max_lookahead_buffer_size,
+                         T>::preprocess_good_suffix_rule(const Data& data) {
+  auto pattern_length = data.lookahead_buffer_size();
+
   // Fill _suffix
   _suffix.assign(pattern_length, 0);
 
@@ -181,7 +158,9 @@ inline void LZ77BoyerMooreDictionary<
       }
       f = i;
 
-      while (g >= 0 && at(begin, g) == at(begin, g + pattern_length - 1 - f)) {
+      while (g >= 0 &&
+             data.lookahead_buffer_reverse_at(g) ==
+                 data.lookahead_buffer_reverse_at(g + pattern_length - 1 - f)) {
         --g;
       }
 
@@ -210,22 +189,6 @@ inline void LZ77BoyerMooreDictionary<
       _good_suffix_table[pattern_length - 1 - _suffix[i]] =
           static_cast<unsigned_type>(pattern_length - 1 - i);
     }
-  }
-}
-
-template <size_t max_dictionary_size,
-          size_t max_lookahead_buffer_size,
-          typename T>
-template <typename InputIterator>
-inline void LZ77BoyerMooreDictionary<max_dictionary_size,
-                                     max_lookahead_buffer_size,
-                                     T>::slide_window(InputIterator begin,
-                                                      InputIterator end) {
-  std::copy(begin, end, std::front_inserter(_dictionary));
-
-  if (_dictionary.size() > max_dictionary_size) {
-    auto dend = _dictionary.end();
-    _dictionary.erase(dend - (_dictionary.size() - max_dictionary_size), dend);
   }
 }
 

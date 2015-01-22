@@ -1,8 +1,7 @@
 #ifndef LZ77_ENCODER_H
 #define LZ77_ENCODER_H
 
-#include <deque>
-#include "utils.h"
+#include "lz77_data.h"
 #include "bit_writer.h"
 #include "lz77_boyer_moore_dictionary.h"
 #include "lz77_naive_dictionary.h"
@@ -17,24 +16,22 @@ template <
 class LZ77Encoder {
  public:
   typedef T symbol_type;
-  typedef std::deque<T> lookahead_buffer_type;
   typedef D<max_dictionary_size, max_lookahead_buffer_size, T> dictionary_type;
 
   template <typename InputIterator, typename OutputIterator>
   size_t operator()(InputIterator begin,
                     InputIterator end,
-                    OutputIterator output_iterator);
+                    OutputIterator output_iterator) {
+    typename DataType<max_dictionary_size,
+                      max_lookahead_buffer_size,
+                      InputIterator,
+                      T>::value data(begin, end);
+    return encode(data, output_iterator);
+  }
 
-  void clear();
-
- protected:
-  lookahead_buffer_type _lookahead_buffer;
-  dictionary_type _dictionary;
-
-  template <typename InputIterator>
-  void fill_lookahead_buffer(InputIterator& begin, InputIterator& end);
-
-  void slide_window(size_t length);
+ private:
+  template <typename Data, typename OutputIterator>
+  size_t encode(Data& data, OutputIterator output_iterator);
 };
 
 template <bits_t position_bits,
@@ -55,37 +52,33 @@ template <bits_t position_bits,
           size_t max_lookahead_buffer_size,
           typename T,
           template <size_t, size_t, typename> class D>
-template <typename InputIterator, typename OutputIterator>
+template <typename Data, typename OutputIterator>
 size_t LZ77Encoder<position_bits,
                    length_bits,
                    max_dictionary_size,
                    max_lookahead_buffer_size,
                    T,
-                   D>::
-operator()(InputIterator begin,
-           InputIterator end,
-           OutputIterator output_iterator) {
+                   D>::encode(Data& data, OutputIterator output_iterator) {
+  dictionary_type dictionary;
   BitWriter<OutputIterator> bit_writer(output_iterator);
   size_t steps = 0;
 
-  while (begin != end || !_lookahead_buffer.empty()) {
-    fill_lookahead_buffer(begin, end);
+  while (!data.empty()) {
+    data.fill_lookahead_buffer();
 
     // Find a match
-    auto match = _dictionary.find_match(_lookahead_buffer.cbegin(),
-                                        _lookahead_buffer.cend());
+    auto match = dictionary.find_match(data);
 
     // Get the next character
-    if (match.length == _lookahead_buffer.size()) {
-      if (begin != end) {
-        _lookahead_buffer.push_back(*begin);
-        ++begin;
+    if (match.length == data.lookahead_buffer_size()) {
+      if (data.has_more_symbols()) {
+        data.load_one_more();
       } else {
         --match.length;
       }
     }
 
-    symbol_type next_symbol = _lookahead_buffer[match.length];
+    symbol_type next_symbol = data.lookahead_buffer_at(match.length);
 
     // Write output
     bit_writer.write(match.position, position_bits);
@@ -93,67 +86,13 @@ operator()(InputIterator begin,
     bit_writer.write(next_symbol);
 
     // Move window
-    slide_window(match.length + 1);
+    data.slide_window(match.length + 1);
 
     // Keep count of the number of steps for decoding
     ++steps;
   }
 
   return steps;
-}
-
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size,
-          size_t max_lookahead_buffer_size,
-          typename T,
-          template <size_t, size_t, typename> class D>
-inline void LZ77Encoder<position_bits,
-                        length_bits,
-                        max_dictionary_size,
-                        max_lookahead_buffer_size,
-                        T,
-                        D>::clear() {
-  _lookahead_buffer.clear();
-  _dictionary.clear();
-}
-
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size,
-          size_t max_lookahead_buffer_size,
-          typename T,
-          template <size_t, size_t, typename> class D>
-template <typename InputIterator>
-inline void LZ77Encoder<position_bits,
-                        length_bits,
-                        max_dictionary_size,
-                        max_lookahead_buffer_size,
-                        T,
-                        D>::fill_lookahead_buffer(InputIterator& begin,
-                                                  InputIterator& end) {
-  for (; begin != end && _lookahead_buffer.size() < max_lookahead_buffer_size;
-       ++begin) {
-    _lookahead_buffer.push_back(*begin);
-  }
-}
-
-template <bits_t position_bits,
-          bits_t length_bits,
-          size_t max_dictionary_size,
-          size_t max_lookahead_buffer_size,
-          typename T,
-          template <size_t, size_t, typename> class D>
-inline void LZ77Encoder<position_bits,
-                        length_bits,
-                        max_dictionary_size,
-                        max_lookahead_buffer_size,
-                        T,
-                        D>::slide_window(size_t length) {
-  auto begin = _lookahead_buffer.begin();
-  auto end = begin + length;
-  _dictionary.slide_window(begin, end);
-  _lookahead_buffer.erase(begin, end);
 }
 
 #endif /* LZ77_ENCODER_H */

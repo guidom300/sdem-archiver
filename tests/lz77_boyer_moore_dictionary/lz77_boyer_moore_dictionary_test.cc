@@ -2,6 +2,7 @@
 #include <QString>
 #include <string>
 #include "lz77_boyer_moore_dictionary.h"
+#include "lz77_data.h"
 
 using std::string;
 
@@ -36,10 +37,12 @@ void LZ77BoyerMooreDictionaryTest::testCase1() {
   string content(dictionary_content.toStdString());
   string pattern(lookahead_buffer.toStdString());
 
-  LZ77BoyerMooreDictionary<100, 100, char> dictionary(content.begin(),
-                                                      content.end());
+  LZ77BufferedData<100, 100, char *, char> data(
+      content.begin(), content.end(), pattern.begin(), pattern.end());
 
-  auto match = dictionary.find_match(pattern.begin(), pattern.end());
+  LZ77BoyerMooreDictionary<100, 100, char> dictionary;
+
+  auto match = dictionary.find_match(data);
 
   QCOMPARE(static_cast<size_t>(match.position), position);
   QCOMPARE(static_cast<size_t>(match.length), length);

@@ -1,6 +1,7 @@
 #include <QString>
 #include <QtTest>
 #include "lz77_naive_dictionary.h"
+#include "lz77_data.h"
 
 class LZ77NaiveDictionaryTest : public QObject {
   Q_OBJECT
@@ -35,11 +36,14 @@ void LZ77NaiveDictionaryTest::testFindMatch() {
   QFETCH(size_t, position);
   QFETCH(size_t, length);
 
-  LZ77NaiveDictionary<8, 100, QChar> dictionary(dictionary_content.cbegin(),
-                                                dictionary_content.cend());
+  LZ77BufferedData<8, 100, QChar *, QChar> data(dictionary_content.begin(),
+                                                dictionary_content.end(),
+                                                lookahead_buffer.begin(),
+                                                lookahead_buffer.end());
 
-  auto match =
-      dictionary.find_match(lookahead_buffer.cbegin(), lookahead_buffer.cend());
+  LZ77NaiveDictionary<8, 100, QChar> dictionary;
+
+  auto match = dictionary.find_match(data);
 
   QCOMPARE(static_cast<size_t>(match.position), position);
   QCOMPARE(static_cast<size_t>(match.length), length);
