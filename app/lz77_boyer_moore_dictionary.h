@@ -25,25 +25,18 @@ class LZ77BoyerMooreDictionary {
  private:
   typedef typename Integer<max_dictionary_size>::type signed_type;
   typedef std::vector<signed_type> signed_table_type;
+  MakeUnsigned<T> make_unsigned;
+
   signed_table_type _bad_character_table;
 
-  typedef typename UnsignedInteger<max_dictionary_size>::type unsigned_type;
-  typedef std::vector<unsigned_type> unsigned_table_type;
-  unsigned_table_type _suffix;
-  unsigned_table_type _good_suffix_table;
+  signed_table_type _suffix;
+  signed_table_type _good_suffix_table;
 
   template <typename Data>
   void preprocess_bad_character_rule(const Data& data);
 
   template <typename Data>
   void preprocess_good_suffix_rule(const Data& data);
-
-  typedef typename UnsignedInteger<std::numeric_limits<T>::max()>::type
-      unsigned_symbol_type;
-
-  static unsigned_symbol_type to_index(const T& symbol) {
-    return static_cast<unsigned_symbol_type>(symbol);
-  }
 };
 
 template <size_t max_dictionary_size,
@@ -98,15 +91,14 @@ LZ77BoyerMooreDictionary<max_dictionary_size,
       }
 
       // Jump ahead
-      auto bad_character_shift =
+      signed_type bad_character_shift =
           k >= 0
-              ? _bad_character_table[to_index(data.dictionary_reverse_at(k))] -
+              ? _bad_character_table[make_unsigned(
+                    data.dictionary_reverse_at(k))] -
                     pattern_length + 1 + i
               : 1;
 
-      j += std::max(
-          static_cast<decltype(bad_character_shift)>(_good_suffix_table[i]),
-          bad_character_shift);
+      j += std::max(_good_suffix_table[i], bad_character_shift);
     }
   }
 
@@ -121,14 +113,13 @@ inline void
 LZ77BoyerMooreDictionary<max_dictionary_size,
                          max_lookahead_buffer_size,
                          T>::preprocess_bad_character_rule(const Data& data) {
-  auto pattern_length = data.lookahead_buffer_size();
-  _bad_character_table.assign(alphabet_size(),
-                              static_cast<signed_type>(pattern_length));
+  signed_type pattern_length = data.lookahead_buffer_size();
+  _bad_character_table.assign(alphabet_size(), pattern_length);
 
   signed_type end = pattern_length - 1;
   auto it = data.lookahead_buffer_rbegin();
   for (signed_type i = 0; i < end; ++i, ++it) {
-    _bad_character_table[to_index(*it)] = end - i;
+    _bad_character_table[make_unsigned(*it)] = end - i;
   }
 }
 
@@ -140,7 +131,7 @@ inline void
 LZ77BoyerMooreDictionary<max_dictionary_size,
                          max_lookahead_buffer_size,
                          T>::preprocess_good_suffix_rule(const Data& data) {
-  auto pattern_length = data.lookahead_buffer_size();
+  signed_type pattern_length = data.lookahead_buffer_size();
 
   // Fill _suffix
   _suffix.assign(pattern_length, 0);
@@ -171,23 +162,21 @@ LZ77BoyerMooreDictionary<max_dictionary_size,
   // Fill _good_suffix_table
   _good_suffix_table.assign(pattern_length + 1, pattern_length);
 
-  unsigned_type j = 0;
+  signed_type j = 0;
   for (signed_type i = pattern_length - 1; i >= 0; --i) {
     if (_suffix[i] == i + 1) {
       for (; j < pattern_length - 1 - i; ++j) {
-        if (static_cast<decltype(pattern_length)>(_good_suffix_table[j]) ==
-            pattern_length) {
-          _good_suffix_table[j] =
-              static_cast<unsigned_type>(pattern_length - 1 - i);
+        if (_good_suffix_table[j] == pattern_length) {
+          _good_suffix_table[j] = pattern_length - 1 - i;
         }
       }
     }
   }
 
   if (pattern_length > 1) {
-    for (unsigned_type i = 0; i <= pattern_length - 2; ++i) {
+    for (signed_type i = 0; i <= pattern_length - 2; ++i) {
       _good_suffix_table[pattern_length - 1 - _suffix[i]] =
-          static_cast<unsigned_type>(pattern_length - 1 - i);
+          pattern_length - 1 - i;
     }
   }
 }

@@ -7,6 +7,7 @@
 #include <limits>
 #include <mutex>
 #include <condition_variable>
+#include <type_traits>
 
 typedef uint_fast8_t bits_t;
 
@@ -146,6 +147,15 @@ class ThreadSafeCounter {
   std::unique_lock<mutex_type> _lock;
 
   typedef std::lock_guard<mutex_type> lock_guard_type;
+};
+
+template <typename T>
+struct MakeUnsigned {
+  typedef typename std::make_unsigned<T>::type unsigned_type;
+
+  unsigned_type operator()(T value) const {
+    return static_cast<unsigned_type>(value);
+  }
 };
 
 #endif  // UTILS_H
