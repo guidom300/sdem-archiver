@@ -6,12 +6,30 @@
 #include <vector>
 #include "huffman_tree_base.h"
 
+/**
+ * An Huffman tree.
+ *
+ * @tparam T the type of the symbols
+ * @tparam W the type of the weights
+ */
 template <typename T, typename W = size_t>
 class HuffmanTree : public HuffmanTreeBase<T, W> {
  public:
+  /**
+   * Construct an HuffmanTree.
+   *
+   * @param begin an iterator referring to the beginning of a sequence to encode
+   * @param end   an iterator referring to past-the-end of a sequence to encode
+   */
   template <typename InputIterator>
   HuffmanTree(InputIterator begin, InputIterator end);
 
+  /**
+   * Lookup the frequency of a symbol.
+   *
+   * @param symbol the symbol to lookup
+   * @return the frequency of the specified symbol
+   */
   W frequency(const T& symbol) const {
     return _symbol_frequency_pairs.at(symbol);
   }

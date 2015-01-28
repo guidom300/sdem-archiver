@@ -323,3 +323,4 @@ cscope.po.out
 /tests/*/*_test
 /cli/resources
 /cli/*/*coder
+/doc/

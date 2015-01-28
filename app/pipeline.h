@@ -5,6 +5,18 @@
 #include <algorithm>
 #include "buffers.h"
 
+/**
+ * Process the contents of a buffer with two @c Workers.
+ *
+ * @tparam FirstWorker  the first Worker
+ * @tparam SecondWorker the second Worker
+ * @param input_buffer  the buffer whose content need processing
+ * @param chunk_size    the length of the input_buffer
+ * @param output_iterator an output iterator for writing the results
+ * @param previus_thread  the thread spawned before the current one
+ * @param counter         a ThreadSafeCounter
+ * @param buffer_pool     a BufferPool
+ */
 template <typename T,
           typename OutputIterator,
           typename Counter,

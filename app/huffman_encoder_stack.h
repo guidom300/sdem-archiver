@@ -5,8 +5,22 @@
 #include "huffman_tree.h"
 #include "huffman_encoder.h"
 
+/**
+ * A Worker for an HuffmanEncoder.
+ *
+ * @tparam T the type of the symbols
+ */
 template <typename T>
 struct HuffmanEncoderStack {
+  /**
+   * Encode a sequence of symbols.
+   *
+   * @param begin a forward iterator referring to the beginning of the sequence
+   *              to encode
+   * @param end   a forward iterator referring to past-the-end of the sequence
+   *              to encode
+   * @param output_iterator an output iterator for writing the encoded sequence
+   */
   template <typename ForwardIterator, typename OutputIterator>
   void operator()(ForwardIterator begin,
                   ForwardIterator end,
@@ -20,6 +34,12 @@ struct HuffmanEncoderStack {
     encoder(begin, end, output_iterator);
   }
 
+  /**
+   * Encode a sequence of symbols.
+   *
+   * @param[out] input_stream  an input stream containing the sequence to encode
+   * @param[out] output_stream an output stream for writing the encoded sequence
+   */
   template <typename InputStream, typename OutputStream>
   void operator()(InputStream& input_stream, OutputStream& output_stream) {
     typedef std::istreambuf_iterator<T> input_iterator_t;

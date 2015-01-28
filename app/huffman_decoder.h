@@ -5,15 +5,37 @@
 #include "bit_reader.h"
 #include "bit_writer.h"
 
+/**
+ * A functor that decodes a sequence of symbols encoded using Huffman coding.
+ *
+ * @tparam T the type of symbols
+ * @tparam W the type of the weights
+ */
 template <typename T, typename W = size_t>
 class HuffmanDecoder {
  public:
   typedef T symbol_type;
 
+  /**
+   * Construct an HuffmanDecoder.
+   *
+   * @param huffman_tree an HuffmanTree to use for decoding the symbols
+   */
   template <typename HuffmanTree>
   explicit HuffmanDecoder(const HuffmanTree& huffman_tree)
       : root(huffman_tree.root()) {}
 
+  /**
+   * Decode a sequence of symbols.
+   *
+   * @param begin an input iterator referring to the beginning of the encoded
+   *              sequence
+   * @param end   an input iterator referring to past-the-end of the encoded
+   *              sequence
+   * @param output_iterator an output iterator for writing the decoded sequence
+   * @param skip_header whether or not @c begin points to the beginning of the
+   *                    header
+   */
   template <typename InputIterator, typename OutputIterator>
   void operator()(InputIterator begin,
                   InputIterator end,

@@ -4,6 +4,15 @@
 #include <vector>
 #include "utils.h"
 
+/**
+ * A class implementing the Boyer-Moore algorithm adapted for LZ77/LZSS.
+ *
+ * @tparam max_dictionary_size the maximum number of symbols that the dictionary
+ *                             may contain
+ * @tparam max_lookahead_buffer_size the maximum number of symbols that the
+ *                                   lookahead buffer may contain
+ * @tparam T the type of the symbols
+ */
 template <size_t max_dictionary_size,
           size_t max_lookahead_buffer_size,
           typename T>
@@ -11,6 +20,9 @@ class LZ77BoyerMooreDictionary {
   static constexpr size_t alphabet_size() { return 1 << 8 * sizeof(T); }
 
  public:
+  /**
+   * Construct a LZ77BoyerMooreDictionary.
+   */
   LZ77BoyerMooreDictionary() {
     _bad_character_table.reserve(alphabet_size());
     _suffix.reserve(max_lookahead_buffer_size);
@@ -19,6 +31,11 @@ class LZ77BoyerMooreDictionary {
 
   typedef Match<max_dictionary_size, max_lookahead_buffer_size> match_type;
 
+  /**
+   * Find a match.
+   *
+   * @param data the dictionary and lookahead buffer to use
+   */
   template <typename Data>
   match_type find_match(const Data& data);
 

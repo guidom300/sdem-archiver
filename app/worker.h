@@ -6,6 +6,14 @@
 #include "buffers.h"
 #include "pipeline.h"
 
+/**
+ * A concept for a functor that has a default constructor, an
+ * @c operator()(InputIterator, InputIterator, OutputIterator) and a
+ * @c prepare_input_buffer(InputIterator&, InputIterator, PtrType, size_t)
+ * member functions.
+ *
+ * @tpara T the type of the wrapped encoder/decoder
+ */
 template <typename T>
 struct Worker {
   template <typename InputIterator, typename OutputIterator>

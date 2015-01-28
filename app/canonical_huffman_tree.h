@@ -8,12 +8,31 @@
 #include "huffman_tree_base.h"
 #include "bit_reader.h"
 
+/**
+ * An HuffmanTree built from a canonical codebook.
+ *
+ * @tparam T the type of the symbols
+ * @tparam W the type of the weights
+ */
 template <typename T, typename W = size_t>
 class CanonicalHuffmanTree : public HuffmanTreeBase<T, W> {
  public:
+  /**
+   * Construct a CanonicalHuffmanTree.
+   *
+   * @param begin an iterator referring to the beginning of an encoded
+   *              sequence of symbols
+   * @param end   an iterator referring to past-the-end of an encoded
+   *              sequence of symbols
+   */
   template <typename InputIterator>
   CanonicalHuffmanTree(InputIterator begin, InputIterator end);
 
+  /**
+   * Construct a CanonicalHuffmanTree.
+   *
+   * @param codebook a non-canonical Huffman codebook
+   */
   template <typename HuffmanCodebook>
   CanonicalHuffmanTree(const HuffmanCodebook& codebook);
 

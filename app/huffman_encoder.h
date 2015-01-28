@@ -7,6 +7,12 @@
 #include "huffman_tree.h"
 #include "canonical_huffman_tree.h"
 
+/**
+ * A functor that encodes a sequence of symbols using Huffman coding.
+ *
+ * @tparam T the type of symbols
+ * @tparam W the type of the weights
+ */
 template <typename T, typename W = size_t>
 class HuffmanEncoder {
  public:
@@ -16,33 +22,82 @@ class HuffmanEncoder {
   typedef std::vector<bool> bitset_type;
   typedef std::unordered_map<T, bitset_type> codebook_type;
 
+  /**
+   * Construct an HuffmanEncoder.
+   *
+   * @param[in] huffman_tree an HuffmanTree to use to build the codebook
+   */
   template <typename HuffmanTree>
   explicit HuffmanEncoder(const HuffmanTree& huffman_tree) {
     navigate(huffman_tree.root());
   }
 
+  /**
+   * Construct an HuffmanEncoder.
+   *
+   * @param first an input iterator referring to the beginning of a
+   *              non-canonical Huffman codebook
+   * @param last  an input iterator referring to past-the-end of a non-canonical
+   *              Huffman codebook
+   */
   template <typename InputIterator>
   HuffmanEncoder(InputIterator first, InputIterator last)
       : _codebook(first, last) {}
 
+  /**
+   * Encode a sequence of symbols.
+   *
+   * @param begin an input iterator referring to the beginning of the sequence
+   *              to encode
+   * @param end   an input iterator referring to past-the-end of the sequence to
+   *              encode
+   * @param output_iterator an output iterator for writing the encoded sequence
+   * @return a count to be used for EOF/EOS management
+   */
   template <typename InputIterator, typename OutputIterator>
   size_t operator()(InputIterator begin,
                     InputIterator end,
                     OutputIterator output_iterator) const;
 
+  /**
+   * Lookup a symbol in the codebook.
+   *
+   * @param symbol the symbol to lookup
+   * @return the code associated with the specified symbol
+   */
   const bitset_type& operator[](symbol_type symbol) const {
     return _codebook.at(symbol);
   }
 
+  /**
+   * Make the encoding canonical.
+   */
   void make_canonical();
 
+  /**
+   * Write the number of encoded bits to an output iterator.
+   *
+   * @param[in]  tree            an HuffmanTree
+   * @param      output_iterator an output iterator
+   */
   template <typename OutputIterator>
   void dump_encoded_bits(const HuffmanTree<T, W>& tree,
                          OutputIterator output_iterator) const;
 
+  /**
+   * Write the codebook to an output iterator.
+   *
+   * @param output_iterator an output iterator
+   */
   template <typename OutputIterator>
   void dump_codebook(OutputIterator output_iterator) const;
 
+  /**
+   * Write the codebook and the number of encoded bits to an output iterator.
+   *
+   * @param[in]  tree            an HuffmanTree
+   * @param      output_iterator an output iterator
+   */
   template <typename OutputIterator>
   void dump_header(const HuffmanTree<T, W>& tree,
                    OutputIterator output_iterator) const {

@@ -6,8 +6,20 @@
 #include "bit_reader.h"
 #include "utils.h"
 
+/**
+ * A functor for retrieving Match instances from a LZ77-encoded sequence.
+ *
+ * @tparam position_bits the number of bits used to encode the match position
+ * @tparam length_bits   the number of bits used to encode the match length
+ */
 template <size_t position_bits, size_t length_bits>
 struct LZ77MatchRetriever {
+  /**
+   * @param[out] bit_reader the BitReader to use
+   * @param[out] match      the Match to initialize
+   * @param[out] symbol     the symbol to initialize
+   * @return true
+   */
   template <typename BitReader, typename MatchType, typename T>
   bool operator()(BitReader& bit_reader, MatchType& match, T& symbol) const {
     bit_reader.read(match.position, position_bits);
@@ -17,11 +29,29 @@ struct LZ77MatchRetriever {
   }
 };
 
+/**
+ * A functor that decodes a sequence of symbols encoded with LZ77.
+ *
+ * @tparam position_bits the number of bits used to encode the match position
+ * @tparam length_bits   the number of bits used to encode the match length
+ * @tparam T             the type of the symbols
+ */
 template <bits_t position_bits, bits_t length_bits, typename T = char>
 class LZ77Decoder {
  public:
   typedef T symbol_type;
 
+  /**
+   * Decode a sequence of symbols.
+   *
+   * @param begin an input iterator referring to the beginning of the encoded
+   *              sequence
+   * @param end   an input iterator referring to past-the-end of the encoded
+   *              sequence
+   * @param output_iterator an output iterator for writing the decoded sequence
+   * @param times           the number of matches to process
+   * @param match_retriever the functor to use for retrieving single matches
+   */
   template <
       typename InputIterator,
       typename OutputIterator,
@@ -32,6 +62,9 @@ class LZ77Decoder {
                   size_t times = std::numeric_limits<size_t>::max(),
                   MatchRetriever match_retriever = MatchRetriever());
 
+  /**
+   * Remove all symbols from the internal dictionary.
+   */
   void clear() { _dictionary.clear(); }
 
  private:

@@ -6,6 +6,18 @@
 #include "lz77_boyer_moore_dictionary.h"
 #include "lz77_naive_dictionary.h"
 
+/**
+ * A functor that encodes a sequence of symbols using LZ77.
+ *
+ * @tparam position_bits the number of bits used to encode the match position
+ * @tparam length_bits   the number of bits used to encode the match length
+ * @tparam max_dictionary_size the maximum number of symbols that the dictionary
+ *                             may contain
+ * @tparam max_lookahead_buffer_size the maximum number of symbols that the
+ *                                   lookahead buffer may contain
+ * @tparam T the type of the symbols
+ * @tparam D the type of the matching algorithm to use
+ */
 template <
     bits_t position_bits,
     bits_t length_bits,
@@ -18,6 +30,16 @@ class LZ77Encoder {
   typedef T symbol_type;
   typedef D<max_dictionary_size, max_lookahead_buffer_size, T> dictionary_type;
 
+  /**
+   * Encode a sequence of symbols.
+   *
+   * @param begin an input iterator referring to the beginning of the sequence
+   *              to encode
+   * @param end   an input iterator referring to past-the-end of the sequence to
+   *              encode
+   * @param output_iterator an output iterator for writing the encoded sequence
+   * @return the number of steps for decoding
+   */
   template <typename InputIterator, typename OutputIterator>
   size_t operator()(InputIterator begin,
                     InputIterator end,

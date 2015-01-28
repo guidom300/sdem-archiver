@@ -4,8 +4,21 @@
 #include "lzss_encoder.h"
 #include "lz77_decoder.h"
 
+/**
+ * A functor for retrieving Match instances from a LZSS-encoded sequence.
+ *
+ * @tparam position_bits the number of bits used to encode the match position
+ * @tparam length_bits   the number of bits used to encode the match length
+ * @tparam minimum_match_length the minimum match length to accept
+ */
 template <size_t position_bits, size_t length_bits, size_t minimum_match_length>
 struct LZSSMatchRetriever {
+  /**
+   * @param[out] bit_reader the BitReader to use
+   * @param[out] match      the Match to initialize
+   * @param[out] symbol     the symbol to optionally initialize
+   * @return whether the symbol was initialized or not
+   */
   template <typename BitReader, typename MatchType, typename T>
   bool operator()(BitReader& bit_reader, MatchType& match, T& symbol) const {
     bool encoded_flag = bit_reader.read();
@@ -22,6 +35,14 @@ struct LZSSMatchRetriever {
   }
 };
 
+/**
+ * A functor that decodes a sequence of symbols encoded with LZSS.
+ *
+ * @tparam position_bits the number of bits used to encode the match position
+ * @tparam length_bits   the number of bits used to encode the match length
+ * @tparam minimum_match_length the minimum match length to accept
+ * @tparam T             the type of the symbols
+ */
 template <bits_t position_bits,
           bits_t length_bits,
           size_t minimum_match_length =
@@ -32,6 +53,16 @@ class LZSSDecoder : public LZ77Decoder<position_bits, length_bits, T> {
   typedef LZ77Decoder<position_bits, length_bits, T> base_type;
 
  public:
+  /**
+   * Decode a sequence of symbols.
+   *
+   * @param begin an input iterator referring to the beginning of the encoded
+   *              sequence
+   * @param end   an input iterator referring to past-the-end of the encoded
+   *              sequence
+   * @param output_iterator an output iterator for writing the decoded sequence
+   * @param times the number of matches to process
+   */
   template <typename InputIterator, typename OutputIterator>
   void operator()(InputIterator begin,
                   InputIterator end,

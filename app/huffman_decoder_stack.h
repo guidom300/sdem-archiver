@@ -7,8 +7,22 @@
 #include "huffman_decoder.h"
 #include "bit_reader.h"
 
+/**
+ * A Worker for an HuffmanDecoder.
+ *
+ * @tparam T the type of the symbols
+ */
 template <typename T>
 struct HuffmanDecoderStack {
+  /**
+   * Decode a sequence of symbols.
+   *
+   * @param begin an input iterator referring to the beginning of the encoded
+   *              sequence
+   * @param end   an input iterator referring to past-the-end of the encoded
+   *              sequence
+   * @param output_iterator an output iterator for writing the decoded sequence
+   */
   template <typename InputIterator, typename OutputIterator>
   void operator()(InputIterator begin,
                   InputIterator end,
@@ -18,6 +32,16 @@ struct HuffmanDecoderStack {
     decoder(begin, end, output_iterator, std::is_pointer<InputIterator>::value);
   }
 
+  /**
+   * Load an encoded sequence in a buffer.
+   *
+   * @param[out] begin an input iterator referring to the beginning of the
+   *                   encoded sequence
+   * @param      end   an input iterator referring to past-the-end of the
+   *                   encoded sequence
+   * @param[out] input_buffer the buffer to load the encoded sequence into
+   * @param      chunk_size   the maximum number of bytes to read
+   */
   template <typename InputIterator>
   static size_t prepare_input_buffer(InputIterator& begin,
                                      InputIterator end,

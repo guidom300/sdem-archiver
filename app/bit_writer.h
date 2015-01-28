@@ -4,32 +4,74 @@
 #include <iterator>
 #include "utils.h"
 
+/**
+ * A class responsible for bitwise output.
+ *
+ * @tparam OutputIterator an output iterator type for writing a single
+ *                        character
+ */
 template <typename OutputIterator = std::ostreambuf_iterator<char>>
 class BitWriter {
  public:
+  /**
+   * Construct a BitWriter.
+   *
+   * @param[out] output_iterator an output iterator
+   */
   explicit BitWriter(const OutputIterator& output_iterator)
       : _output_iterator(output_iterator), _buffer(0), _count(8) {}
 
+  /**
+   * Construct a BitWriter.
+   *
+   * @param[out] sink an instance of a class that can be used to construct
+   *                  an output iterator (e.g. a container or a stream).
+   */
   template <typename Sink>
   explicit BitWriter(Sink& sink)
       : BitWriter(OutputIterator(sink)) {}
 
+  /**
+   * Write all bits of @c value.
+   *
+   * @param value the value to write
+   */
   template <typename T>
   void write(T value);
 
+  /**
+   * Write the least significant @c bits bits of value.
+   *
+   * @param value the value to read from
+   * @param bits  the number of least significant bits to write
+   */
   template <typename T>
   void write(T value, bits_t bits);
 
+  /**
+   * Write a sequence of bits.
+   *
+   * @param[in] bitset a container of @c bool values
+   */
   template <typename Bitset>
   void write_bitset(const Bitset& bitset);
 
+  /**
+   * @return whether or not there are still bits to be written
+   */
   bool empty() const { return _count == 8; }
 
+  /**
+   * Empty the internal buffer, padding it if necessary.
+   */
   void flush() {
     _buffer <<= _count;
     write_buffer();
   }
 
+  /**
+   * Flush the BitWriter on destruction.
+   */
   ~BitWriter() {
     if (!empty()) {
       flush();
