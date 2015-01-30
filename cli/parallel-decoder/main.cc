@@ -2,7 +2,7 @@
 #include <fstream>
 #include <ios>
 #include <iterator>
-#include "worker.h"
+#include "splitter.h"
 #include "lzss_decoder.h"
 #include "decoder_wrapper.h"
 #include "huffman_decoder_stack.h"
@@ -20,12 +20,14 @@ int main(int argc, char** argv) {
 
   input_file >> noskipws;
 
-  split<char, HuffmanDecoderStack<char>, DecoderWrapper<LZSSDecoder<12, 4>>>(
-      std::istreambuf_iterator<char>(input_file.rdbuf()),
-      std::istreambuf_iterator<char>(),
-      std::ostreambuf_iterator<char>(output_file),
-      8,
-      32 * 1024);
+  Splitter<HuffmanDecoderStack<char>, DecoderWrapper<LZSSDecoder<12, 4>>>
+      splitter;
+
+  splitter(std::istreambuf_iterator<char>(input_file.rdbuf()),
+           std::istreambuf_iterator<char>(),
+           std::ostreambuf_iterator<char>(output_file),
+           8,
+           32 * 1024);
 
   return 0;
 }
