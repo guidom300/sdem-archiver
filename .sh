@@ -65,6 +65,14 @@ remove_trailing_whitespaces() {
     $(which_gnu_sed) -i 's/[[:space:]]*$//' "$1"
 }
 
+update_app_pro() {
+    local app_pro=app/app.pro
+    local sed=$(which_gnu_sed)
+
+    $sed "/^    /d" $app_pro | $sed "/^HEADERS/a\\$(find app -type f -name '*.h' -o -name '*.hpp' | xargs basename -a | sort | $sed 's/^/    /' | $sed 's/$/ \\/')" > $app_pro
+    remove_trailing_whitespaces $app_pro
+}
+
 update_project() {
     local app_pro=app/app.pro
     local sed=$(which_gnu_sed)
@@ -73,8 +81,7 @@ update_project() {
     [ -f Makefile ] && make distclean
 
     # find all headers and update the project file
-    $sed "/^    /d" $app_pro | $sed "/^HEADERS/a\\$(find app -type f -name '*.h' -o -name '*.hpp' | xargs basename | sort | $sed 's/^/    /' | $sed 's/$/ \\/')" > $app_pro
-    remove_trailing_whitespaces $app_pro
+    update_app_pro
 
     # update xcode project files
     qmake
