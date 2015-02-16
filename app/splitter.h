@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "utils.h"
 #include "buffers.h"
-#include "pipeline.h"
 
 /**
  * A functor that processes a sequence by splitting it into chunks and assigning
