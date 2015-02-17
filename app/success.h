@@ -2,6 +2,8 @@
 #define SUCCESS_H
 
 #include <QDialog>
+#include <QTime>
+#include <thread>
 #include "mainwindow.h"
 
 
@@ -14,7 +16,7 @@ class Success : public QDialog
     Q_OBJECT
 
 public:
-    explicit Success(qint32 &time, QWidget *parent = 0);
+    explicit Success(QWidget *parent = 0);
     ~Success();
 
 private slots:
@@ -22,7 +24,12 @@ private slots:
 
 private:
     Ui::Success *ui;
-    qint32 m_time;
+    bool running;
+    QTime currentTime;
+    std::thread *clockThread;
+
+    static void timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running);
+
 };
 
 #endif // SUCCESS_H

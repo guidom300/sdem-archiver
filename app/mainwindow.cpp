@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QUrl>
 #include <QDebug>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -47,7 +48,7 @@ void MainWindow::on_pushButton_clicked()
 {
     //Destination folder button
     QString dir = QFileDialog::getExistingDirectory(this, tr("Choose destination folder"),
-                                                "/Users/gm/Documents/",
+                                                QDir::homePath(),
                                                 QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
     ui->textBrowser->setText(dir);
@@ -56,7 +57,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
     //Choose file button
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), "/Users/gm/Documents/", "All files (*.*); ; Text Files(*.txt)");
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "All files (*.*); ; Text Files(*.txt)");
     ui->textBrowser_2->setText(filename);
 }
 
@@ -74,7 +75,26 @@ void MainWindow::on_pushButton_3_clicked()
     // all'interno, al temrine della funzione di compressione
 
     //this->hide();
-    Success success(threads) ;
+
+
+    QString filepath = ui->textBrowser_2->toPlainText();
+    QString directory = ui->textBrowser->toPlainText();
+    QFileInfo fi(filepath);
+    QString base = fi.baseName();
+    QString outputName = QDir(directory).filePath(base+".enc");
+    QFileInfo output( outputName );
+    if(output.exists())
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Attention", outputName + " already exists, do you want to overwrite it?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No)
+        {
+            return;
+        }
+
+    }
+    Success success;
     success.setModal(true);
     success.exec();
 
@@ -138,7 +158,7 @@ void MainWindow::on_dec_startButton_clicked()
     // all'interno, al temrine della funzione di compressione
 
     //this->hide();
-    Success success(threads) ;
+    Success success;
     success.setModal(true);
     success.exec();
 }
