@@ -27,8 +27,14 @@ private:
     bool running;
     QTime currentTime;
     std::thread *clockThread;
+    std::thread *startEncoder;
+    QString input;
+    QString output;
+    QInt nThreads;
+    bool dictType;
 
     static void timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running);
+    static void start(const char* input, const char* output, int nThreads, bool dictType);
 
 };
 

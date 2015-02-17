@@ -64,11 +64,11 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
     //Start button
-    qint32 threads = ui->spinBox ->value();
-    qint8 dict = 0; //default naive
+    qint32 nThreads = ui->spinBox ->value();
+    bool dictType = false; //default naive
     if(ui->bm->isChecked())
         {
-            dict = 1;
+            dictType = true;
         }
 
     //invoco funzione di compressione passando i parametri dict (0 = naive, 1 = bm) e threads
@@ -94,7 +94,7 @@ void MainWindow::on_pushButton_3_clicked()
         }
 
     }
-    Success success;
+    Success success(filepath, outputName, nThreads, dictType);
     success.setModal(true);
     success.exec();
 
