@@ -1,15 +1,17 @@
-QT       += core
+QT       += core gui
 
-QT       -= gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = app
-CONFIG   += console
+
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
 
-SOURCES += main.cc
+SOURCES += main.cc \
+    mainwindow.cpp \
+success.cpp
 
 HEADERS += \
     bit_writer.h \
@@ -22,6 +24,12 @@ HEADERS += \
     lz77_encoder.h \
     lz77_naive_dictionary.h \
     tree_node.h \
-    utils.h
+    utils.h \
+    mainwindow.h \
+success.h
 
 include(../common.pri)
+
+FORMS += \
+    mainwindow.ui \
+    success.ui
