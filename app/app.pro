@@ -41,3 +41,5 @@ HEADERS += \
 FORMS += \
 
 include(../common.pri)
+
+CONFIG += release
