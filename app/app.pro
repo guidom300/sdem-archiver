@@ -9,7 +9,8 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cc
+SOURCES += \
+    main.cc
 
 HEADERS += \
     bit_reader.h \
@@ -36,5 +37,7 @@ HEADERS += \
     tree_node.h \
     utils.h \
     worker.h
+
+FORMS += \
 
 include(../common.pri)

@@ -70,6 +70,11 @@ update_app_pro() {
     local sed=$(which_gnu_sed)
 
     $sed "/^    /d" $app_pro | $sed "/^HEADERS/a\\$(find app -type f -name '*.h' -o -name '*.hpp' | xargs basename -a | sort | $sed 's/^/    /' | $sed 's/$/ \\/')" > $app_pro
+
+    cat $app_pro | $sed "/^SOURCES/a\\$(find app -type f -name '*.cc' -o -name '*.cpp' | xargs basename -a | sort | $sed 's/^/    /' | $sed 's/$/ \\/')" > $app_pro
+
+    cat $app_pro | $sed "/^FORMS/a\\$(find app -type f -name '*.ui' | xargs basename -a | sort | $sed 's/^/    /' | $sed 's/$/ \\/')" > $app_pro
+
     remove_trailing_whitespaces $app_pro
 }
 
