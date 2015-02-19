@@ -1,34 +1,49 @@
 #include "success.h"
 #include "ui_success.h"
 #include <QLCDNumber>
+#include <iostream>
+#include <fstream>
+#include <ios>
+#include <iterator>
+#include "splitter.h"
+#include "worker.h"
+#include "encoder_wrapper.h"
+#include "lzss_encoder.h"
+#include "huffman_encoder_stack.h"
+#include <QDebug>
 
-Success::Success(QWidget *parent) :
+using namespace std;
+
+Success::Success(QString input, QString output, int nThreads, bool dictType, QWidget *parent) :
     QDialog(parent),
+    _input(input),
+    _output(output),
+    _nThreads(nThreads),
+    _dictType(dictType),
     ui(new Ui::Success)
 {
     ui->setupUi(this);
     ui->pushButton->setDisabled(true);
-   // ui->labelSuccess->setText("File compressed successfully!");
+    ui->labelSuccess->setText("");
     ui->lcd->display(0);
     running = false;
-    clockThread = new std::thread(timeUpgrade, &currentTime, ui, &running);
-    encoderThread = new std::thread(start, input, output, nThreads, dict);
-
+    startEncoder = new std::thread(start, (const char*) _input.toLocal8Bit().data(), (const char*) _output.toLocal8Bit().data(), _nThreads, _dictType, &running);
+    clockThread = new std::thread(timeUpgrade, &currentTime, ui, &running, _input, _output);
 }
 
 Success::~Success()
 {
+    delete startEncoder;
     delete clockThread;
     delete ui;
 }
 
 void Success::on_pushButton_clicked()
 {
-    running = false;
     this->close();
 }
 
-void Success::timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running)
+void Success::timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running, QString input, QString output)
 {
     currentTime->start();
     while(*running)
@@ -36,6 +51,13 @@ void Success::timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running)
         std::this_thread::sleep_for (std::chrono::milliseconds(10));
         ui->lcd->display(currentTime->elapsed());
     }
+
+    ui->labelSuccess->setText("File compressed successfully!");
+    ui->pushButton->setEnabled(true);
+    QFileInfo fi(input);
+    QFileInfo fo(output);
+    float compressionRatio = ((float)fo.size() / (float)fi.size()) * 100;
+    ui->lcd_2->display(compressionRatio);
 }
 
 void Success::start(const char* input, const char* output, int nThreads, bool dictType, bool* running)

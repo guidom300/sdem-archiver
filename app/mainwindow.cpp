@@ -71,12 +71,6 @@ void MainWindow::on_pushButton_3_clicked()
             dictType = true;
         }
 
-    //invoco funzione di compressione passando i parametri dict (0 = naive, 1 = bm) e threads
-    // all'interno, al temrine della funzione di compressione
-
-    //this->hide();
-
-
     QString filepath = ui->textBrowser_2->toPlainText();
     QString directory = ui->textBrowser->toPlainText();
     QFileInfo fi(filepath);
@@ -135,7 +129,7 @@ void MainWindow::on_dec_destPath_textChanged()
 void MainWindow::on_dec_inputButton_clicked()
 {
     //Choose file button
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose file to decode"), "/Users/gm/Documents/", "All files (*.*); ; Text Files(*.txt)");
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose file to decode"), QDir::homePath(), "Enc Files(*.enc)");
     ui->dec_inputPath->setText(filename);
 }
 
@@ -143,24 +137,39 @@ void MainWindow::on_dec_destButton_clicked()
 {
     //Destination folder button
     QString dir = QFileDialog::getExistingDirectory(this, tr("Choose destination folder"),
-                                                "/Users/gm/Documents/",
-                                                QFileDialog::ShowDirsOnly
-                                                | QFileDialog::DontResolveSymlinks);
+                                                    QDir::homePath(),
+                                                    QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks);
     ui->dec_destPath->setText(dir);
 }
 
 void MainWindow::on_dec_startButton_clicked()
 {
     //Start decoder button
-    qint32 threads = ui->dec_threads->value();
+    qint32 nThreads = ui->dec_threads->value();
 
-    //invoco funzione di compressione passando i parametri dict (0 = naive, 1 = bm) e threads
-    // all'interno, al temrine della funzione di compressione
+    QString filepath = ui->dec_inputPath->toPlainText();
+    QString directory = ui->dec_destPath->toPlainText();
+    QFileInfo fi(filepath);
+    QString base = fi.baseName();
+    QString outputName = QDir(directory).filePath(base+".txt"); //occorre verificare tipo file di origine
+    QFileInfo output( outputName );
+    if(output.exists())
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Attention", outputName + " already exists, do you want to overwrite it?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No)
+        {
+            return;
+        }
 
-    //this->hide();
-    Success success;
+    }
+    /*
+    Success success(filepath, outputName, nThreads);
     success.setModal(true);
     success.exec();
+    */
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)

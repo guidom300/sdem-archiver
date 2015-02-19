@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Processing...</string>
   </property>
   <widget class="QLabel" name="labelSuccess">
    <property name="geometry">
@@ -24,7 +24,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>15</pointsize>
+     <pointsize>20</pointsize>
     </font>
    </property>
    <property name="text">

@@ -13,11 +13,6 @@
   <property name="windowTitle">
    <string>SDEM-ARCHIVER</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normalon>../Downloads/Fire-Toy-icon.png</normalon>
-   </iconset>
-  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
@@ -29,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_1">
      <property name="toolTip">
