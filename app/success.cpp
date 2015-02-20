@@ -33,8 +33,12 @@ Success::Success(QString input, QString output, int nThreads, bool dictType, QWi
 
 Success::~Success()
 {
+    startEncoder->join();
     delete startEncoder;
+
+    clockThread->join();
     delete clockThread;
+
     delete ui;
 }
 
