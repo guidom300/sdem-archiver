@@ -2,6 +2,7 @@
 #include <fstream>
 #include <ios>
 #include <iterator>
+#include <cstdlib>
 #include "splitter.h"
 #include "worker.h"
 #include "lzss_encoder.h"
@@ -11,9 +12,16 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-  if (argc != 3) {
+  if (argc < 3) {
     cerr << "Usage: " << argv[0] << " input_file output_file\n";
     return 1;
+  }
+
+  int threads;
+  if (argc == 4) {
+    threads = atoi(argv[3]);
+  } else {
+    threads = 8;
   }
 
   ifstream input_file(argv[1], ios::binary);
@@ -27,8 +35,8 @@ int main(int argc, char** argv) {
   splitter(std::istreambuf_iterator<char>(input_file.rdbuf()),
            std::istreambuf_iterator<char>(),
            std::ostreambuf_iterator<char>(output_file),
-           8,
-           32 * 1024);
+           threads,
+           64 * 1000);
 
   return 0;
 }
