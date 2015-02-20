@@ -70,8 +70,10 @@ void Splitter<W1, W2, T>::operator()(InputIterator begin,
     previous_thread = new_thread;
   }
 
-  previous_thread->join();
-  delete previous_thread;
+  if (previous_thread) {
+    previous_thread->join();
+    delete previous_thread;
+  }
 }
 
 template <typename W1, typename W2, typename T>

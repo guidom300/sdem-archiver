@@ -36,6 +36,7 @@ HEADERS += \
     lzss_decoder.h \
     lzss_encoder.h \
     mainwindow.h \
+    parallel.h \
     splitter.h \
     success.h \
     tree_node.h \
