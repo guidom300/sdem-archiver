@@ -33,6 +33,7 @@ HEADERS += \
     lz77_naive_dictionary.h \
     lzss_decoder.h \
     lzss_encoder.h \
+    parallel.h \
     splitter.h \
     tree_node.h \
     utils.h \
