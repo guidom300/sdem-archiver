@@ -58,7 +58,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
     //Choose file button
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "Music Files (*.mp3); ; Text Files(*.txt)");
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "All Files (*.*); ; Text Files(*.txt)");
     ui->textBrowser_2->setText(filename);
 }
 
