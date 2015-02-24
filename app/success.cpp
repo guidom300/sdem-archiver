@@ -12,19 +12,15 @@ using namespace std;
 
 Success::Success(QString input, QString output, int nThreads, bool dictType, QWidget *parent) :
     QDialog(parent),
-    _input(input),
-    _output(output),
-    _nThreads(nThreads),
-    _dictType(dictType),
-    ui(new Ui::Success)
+    ui(new Ui::Success),
+    running(true),
+    clockThread(new std::thread(timeUpgrade, &currentTime, ui, &running, input, output)),
+    startEncoder(new std::thread(start, input, output, nThreads, dictType, &running))
 {
     ui->setupUi(this);
     ui->pushButton->setDisabled(true);
     ui->labelSuccess->setText("");
     ui->lcd->display(0);
-    running = true;
-    startEncoder = new std::thread(start, _input.toStdString().c_str(), _output.toStdString().c_str(), _nThreads, _dictType, &running);
-    clockThread = new std::thread(timeUpgrade, &currentTime, ui, &running, _input, _output);
 }
 
 Success::~Success()
@@ -60,9 +56,9 @@ void Success::timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running, QS
     ui->lcd_2->display(compressionRatio);
 }
 
-void Success::start(const char* input, const char* output, int nThreads, bool dictType, bool* running)
+void Success::start(QString input, QString output, int nThreads, bool dictType, bool* running)
 {
-    encode_in_parallel(input, output, nThreads);
+    encode_in_parallel(input.toStdString().c_str(), output.toStdString().c_str(), nThreads);
 
     *running = false;
 }
