@@ -58,7 +58,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
     //Choose file button
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "All Files (*.*); ; Text Files(*.txt)");
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "All Files (*.*)");
     ui->textBrowser_2->setText(filename);
 }
 
@@ -168,7 +168,7 @@ void MainWindow::on_dec_startButton_clicked()
     QFileInfo file(filepath);
     QString base = file.baseName();
     QString fileInput = filepath;
-    fileInput.remove(QString(".enc"));
+    fileInput = fileInput.mid(0, fileInput.length()-4);
     QFileInfo fi(fileInput);
     QString suffix = fi.suffix();
     QString outputName = QDir(directory).filePath(base+"."+suffix);
