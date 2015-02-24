@@ -10,6 +10,7 @@ TEMPLATE = app
 
 
 SOURCES += \
+    dec_success.cpp \
     main.cc \
     mainwindow.cpp \
     parallel.cc \
@@ -21,6 +22,7 @@ HEADERS += \
     buffers.h \
     canonical_huffman_tree.h \
     decoder_wrapper.h \
+    dec_success.h \
     encoder_wrapper.h \
     huffman_decoder.h \
     huffman_decoder_stack.h \
@@ -45,6 +47,7 @@ HEADERS += \
     worker.h
 
 FORMS += \
+    dec_success.ui \
     mainwindow.ui \
     success.ui
 

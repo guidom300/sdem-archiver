@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //this->setWindowIcon(QIcon("/Users/gm/Download/Fire-Toy-icon.png"));
 
     ui->tabWidget->setTabText(0, "Encoder");
     ui->tabWidget->setTabText(1, "Decoder");
@@ -20,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->naive->setChecked(true);
     ui->spinBox->setValue(4);   //default
     ui->pushButton_3->setEnabled(false);
+    ui->textBrowser->setText(QDir::homePath());
     /*
     QMovie *movie = new QMovie("/Users/gm/Download/loading.gif");
     QLabel *processLabel = new QLabel(this);
@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //decoder
     ui->dec_startButton->setEnabled(false);
     ui->dec_threads->setValue(4);
+    ui->dec_destPath->setText(QDir::homePath());
 
     setAcceptDrops(true);
 
@@ -57,7 +58,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
     //Choose file button
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "All files (*.*); ; Text Files(*.txt)");
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "Music Files (*.mp3); ; Text Files(*.txt)");
     ui->textBrowser_2->setText(filename);
 }
 
@@ -75,23 +76,37 @@ void MainWindow::on_pushButton_3_clicked()
     QString directory = ui->textBrowser->toPlainText();
     QFileInfo fi(filepath);
     QString base = fi.baseName();
-    QString outputName = QDir(directory).filePath(base+".enc");
+    QString suffix = fi.suffix();
+    QString outputName = QDir(directory).filePath(base+"."+suffix+".enc");
     QFileInfo output( outputName );
-    if(output.exists())
+    if((float)fi.size() <= 0)
     {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Attention", outputName + " already exists, do you want to overwrite it?",
-                                      QMessageBox::Yes|QMessageBox::No);
-        if (reply == QMessageBox::No)
+        reply = QMessageBox::critical(this, "Error", filepath + " is empty. Choose another input file.",
+                                      QMessageBox::Ok);
+        if (reply == QMessageBox::Ok)
         {
             return;
         }
-
     }
-    Success success(filepath, outputName, nThreads, dictType);
-    success.setModal(true);
-    success.exec();
+    else
+    {
+        if(output.exists())
+        {
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "Attention", outputName + " already exists, do you want to overwrite it?",
+                                          QMessageBox::Yes|QMessageBox::No);
+            if (reply == QMessageBox::No)
+            {
+                return;
+            }
 
+        }
+
+        Success success(filepath, outputName, nThreads, dictType);
+        success.setModal(true);
+        success.exec();
+    }
 }
 
 
@@ -150,26 +165,41 @@ void MainWindow::on_dec_startButton_clicked()
 
     QString filepath = ui->dec_inputPath->toPlainText();
     QString directory = ui->dec_destPath->toPlainText();
-    QFileInfo fi(filepath);
-    QString base = fi.baseName();
-    QString outputName = QDir(directory).filePath(base+".txt"); //occorre verificare tipo file di origine
+    QFileInfo file(filepath);
+    QString base = file.baseName();
+    QString fileInput = filepath;
+    fileInput.remove(QString(".enc"));
+    QFileInfo fi(fileInput);
+    QString suffix = fi.suffix();
+    QString outputName = QDir(directory).filePath(base+"."+suffix);
     QFileInfo output( outputName );
-    if(output.exists())
+    if((float)file.size() <= 0)
     {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Attention", outputName + " already exists, do you want to overwrite it?",
-                                      QMessageBox::Yes|QMessageBox::No);
-        if (reply == QMessageBox::No)
+        reply = QMessageBox::critical(this, "Error", filepath + " is empty. Choose another input file.",
+                                      QMessageBox::Ok);
+        if (reply == QMessageBox::Ok)
         {
             return;
         }
-
     }
-    /*
-    Success success(filepath, outputName, nThreads);
-    success.setModal(true);
-    success.exec();
-    */
+    else
+    {
+        if(output.exists())
+        {
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "Attention", outputName + " already exists, do you want to overwrite it?",
+                                          QMessageBox::Yes|QMessageBox::No);
+            if (reply == QMessageBox::No)
+            {
+                return;
+            }
+        }
+
+        Dec_success dec_success(filepath, outputName, nThreads);
+        dec_success.setModal(true);
+        dec_success.exec();
+    }
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)

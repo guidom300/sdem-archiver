@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtGui>
 #include "success.h"
+#include "dec_success.h"
 
 namespace Ui {
 class MainWindow;
