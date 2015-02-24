@@ -10,7 +10,8 @@ TEMPLATE = app
 
 
 SOURCES += \
-    main.cc
+    main.cc \
+    parallel.cc
 
 HEADERS += \
     bit_reader.h \
