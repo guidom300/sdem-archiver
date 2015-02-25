@@ -12,6 +12,7 @@ TEMPLATE = app
 SOURCES += \
     main.cc \
     mainwindow.cpp \
+    parallel.cc \
     success.cpp
 
 HEADERS += \

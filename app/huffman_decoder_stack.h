@@ -54,7 +54,7 @@ template <typename InputIterator>
 size_t HuffmanDecoderStack<char>::prepare_input_buffer(InputIterator& begin,
                                                        InputIterator end,
                                                        char* input_buffer,
-                                                       size_t chunk_size) {
+                                                       size_t) {
   size_t current_chunk_size = 0;
 
   for (; current_chunk_size < 256 && begin != end;

@@ -9,3 +9,4 @@ include(deployment.pri)
 qtcAddDeployment()
 
 include(../cli.pri)
+LIBS += ../../app/parallel.o
