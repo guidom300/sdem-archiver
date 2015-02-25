@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_1">
      <property name="toolTip">
@@ -165,6 +165,9 @@
          <height>24</height>
         </rect>
        </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
       </widget>
      </widget>
      <widget class="QPushButton" name="pushButton_3">
@@ -283,6 +286,9 @@
          <width>47</width>
          <height>24</height>
         </rect>
+       </property>
+       <property name="minimum">
+        <number>1</number>
        </property>
       </widget>
      </widget>
