@@ -58,7 +58,7 @@ void Success::timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running, QS
 
 void Success::start(QString input, QString output, int nThreads, bool dictType, bool* running)
 {
-    encode_in_parallel(input.toStdString().c_str(), output.toStdString().c_str(), nThreads);
+    encode_in_parallel(input.toStdString().c_str(), output.toStdString().c_str(), nThreads, dictType);
 
     *running = false;
 }

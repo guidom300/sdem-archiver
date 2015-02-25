@@ -25,7 +25,10 @@ static void process_in_parallel(const char* input,
   output_file.close();
 }
 
-void encode_in_parallel(const char* input, const char* output, size_t threads);
+void encode_in_parallel(const char* input,
+                        const char* output,
+                        size_t threads,
+                        bool boyer_moore = true);
 
 void decode_in_parallel(const char* input, const char* output, size_t threads);
 
