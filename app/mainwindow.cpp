@@ -216,6 +216,30 @@ void MainWindow::dropEvent(QDropEvent *event)
     */
     if (fileName.isEmpty())
         return;
+    if(ui->tabWidget->currentIndex() == 0)
+    {
+        //encoder
+        if(fileName.right(1) == "/")
+        {
+            ui->textBrowser->setText(fileName.mid(0, fileName.length()-1)); //elimino in /
+        }
+        else
+        {
+            ui->textBrowser_2->setText(fileName);
+        }
+    }
+    else
+    {
+        //decoder
+        if(fileName.right(1) == "/")
+        {
+            ui->dec_destPath->setText(fileName.mid(0, fileName.length()-1)); //elimino in /
+        }
+        else
+        {
+            ui->dec_inputPath->setText(fileName);
+        }
+    }
 
-    ui->textBrowser_2->setText(fileName);
+
 }
