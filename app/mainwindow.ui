@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>300</height>
+    <height>310</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>9</x>
       <y>9</y>
       <width>541</width>
-      <height>231</height>
+      <height>250</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -33,158 +33,170 @@
      <attribute name="title">
       <string>Tab 1</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>60</y>
-        <width>501</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Destination Folder</string>
-      </property>
-      <widget class="QTextBrowser" name="textBrowser">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>20</y>
-         <width>390</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>20</y>
-         <width>90</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>0</y>
-        <width>501</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Input File Path</string>
-      </property>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>20</y>
-         <width>90</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="textBrowser_2">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>20</y>
-         <width>390</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_3">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
         <x>80</x>
-        <y>110</y>
-        <width>120</width>
-        <height>80</height>
+        <y>120</y>
+        <width>381</width>
+        <height>91</height>
        </rect>
       </property>
-      <property name="title">
-       <string>Dictionary</string>
-      </property>
-      <widget class="QRadioButton" name="naive">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>102</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>NAIVE</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="bm">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>102</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Boyer-Moore</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="maximumSize">
+          <size>
+           <width>250</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Dictionary</string>
+         </property>
+         <widget class="QRadioButton" name="naive">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>102</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>NAIVE</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="bm">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>50</y>
+            <width>102</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Boyer-Moore</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="maximumSize">
+          <size>
+           <width>250</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Threads</string>
+         </property>
+         <widget class="QSpinBox" name="spinBox">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>30</y>
+            <width>47</width>
+            <height>24</height>
+           </rect>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QGroupBox" name="groupBox_4">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>110</y>
-        <width>120</width>
-        <height>80</height>
+        <x>10</x>
+        <y>0</y>
+        <width>521</width>
+        <height>121</height>
        </rect>
       </property>
-      <property name="title">
-       <string>Threads</string>
-      </property>
-      <widget class="QSpinBox" name="spinBox">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>30</y>
-         <width>47</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>125</y>
-        <width>101</width>
-        <height>71</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Start</string>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Input File Path</string>
+         </property>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>20</y>
+            <width>90</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+         <widget class="QTextBrowser" name="textBrowser_2">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>20</y>
+            <width>390</width>
+            <height>21</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Destination Folder</string>
+         </property>
+         <widget class="QTextBrowser" name="textBrowser">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>20</y>
+            <width>390</width>
+            <height>21</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>20</y>
+            <width>90</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
@@ -194,119 +206,131 @@
      <attribute name="title">
       <string>Tab 2</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox_5">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>60</y>
-        <width>501</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Destination Folder</string>
-      </property>
-      <widget class="QTextBrowser" name="dec_destPath">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>20</y>
-         <width>390</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="dec_destButton">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>20</y>
-         <width>90</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_6">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
+        <x>10</x>
         <y>0</y>
-        <width>501</width>
-        <height>51</height>
+        <width>521</width>
+        <height>121</height>
        </rect>
       </property>
-      <property name="title">
-       <string>Input File Path</string>
-      </property>
-      <widget class="QPushButton" name="dec_inputButton">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>20</y>
-         <width>90</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="dec_inputPath">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>20</y>
-         <width>390</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Input File Path</string>
+         </property>
+         <widget class="QPushButton" name="dec_inputButton">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>20</y>
+            <width>90</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+         <widget class="QTextBrowser" name="dec_inputPath">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>20</y>
+            <width>390</width>
+            <height>21</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Destination Folder</string>
+         </property>
+         <widget class="QTextBrowser" name="dec_destPath">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>20</y>
+            <width>390</width>
+            <height>21</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="dec_destButton">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>20</y>
+            <width>90</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QGroupBox" name="dec_Threads">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>150</x>
-        <y>110</y>
-        <width>120</width>
-        <height>80</height>
+        <x>110</x>
+        <y>120</y>
+        <width>331</width>
+        <height>107</height>
        </rect>
       </property>
-      <property name="title">
-       <string>Threads</string>
-      </property>
-      <widget class="QSpinBox" name="dec_threads">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>30</y>
-         <width>47</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QPushButton" name="dec_startButton">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>125</y>
-        <width>101</width>
-        <height>71</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Start</string>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="dec_Threads">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Threads</string>
+         </property>
+         <widget class="QSpinBox" name="dec_threads">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>30</y>
+            <width>47</width>
+            <height>24</height>
+           </rect>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="dec_startButton">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </widget>

@@ -14,19 +14,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidget->setTabText(0, "Encoder");
     ui->tabWidget->setTabText(1, "Decoder");
 
-
     //encoder
     ui->naive->setChecked(true);
     ui->spinBox->setValue(4);   //default
     ui->pushButton_3->setEnabled(false);
     ui->textBrowser->setText(QDir::homePath());
-    /*
-    QMovie *movie = new QMovie("/Users/gm/Download/loading.gif");
-    QLabel *processLabel = new QLabel(this);
-    processLabel->setMovie(movie);
-    //ui -> label->setMovie(movie);
-    movie->start();
-    */
 
     //decoder
     ui->dec_startButton->setEnabled(false);
