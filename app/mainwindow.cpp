@@ -210,7 +210,7 @@ void MainWindow::dropEvent(QDropEvent *event)
     if (urls.isEmpty())
         return;
 
-    QString fileName = urls.first().toLocalFile();
+    QFileInfo file(urls.first().toLocalFile());
     //https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURL_Class/
     /*
     if (url.host().isEmpty() && url.path().startsWith(QLatin1String("/.file/id=")))
@@ -219,8 +219,31 @@ void MainWindow::dropEvent(QDropEvent *event)
    url.setPath(url.path().normalized(QString::NormalizationForm_C));
    ret.append(url);
     */
-    if (fileName.isEmpty())
+    if (!file.exists())
         return;
 
-    ui->inputFileEncoder->setText(fileName);
+    if(ui->tabWidget->currentIndex() == 0)
+    {
+        //encoder
+        if(file.isDir())
+        {
+            ui->destinationEncoder->setText(file.canonicalFilePath());
+        }
+        else
+        {
+            ui->inputFileEncoder->setText(file.canonicalFilePath());
+        }
+    }
+    else
+    {
+        //decoder
+        if(file.isDir())
+        {
+            ui->destinationDecoder->setText(file.canonicalFilePath());
+        }
+        else
+        {
+            ui->inputFileDecoder->setText(file.canonicalFilePath());
+        }
+    }
 }
