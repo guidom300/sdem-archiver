@@ -29,7 +29,7 @@ private:
     std::thread *clockThread;
     std::thread *startEncoder;
 
-    static void timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running, QString input, QString output);
+    static void timeUpgrade(Success* dialog, QString input, QString output);
     static void start(QString input, QString output, int nThreads, bool dictType, bool* running);
 
 };

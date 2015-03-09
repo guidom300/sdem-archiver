@@ -25,13 +25,13 @@ private slots:
 
     void on_pushButton_3_clicked();
 
-    void on_textBrowser_2_textChanged();
+    void on_inputFileEncoder_textChanged();
 
-    void on_textBrowser_textChanged();
+    void on_destinationEncoder_textChanged();
 
-    void on_dec_inputPath_textChanged();
+    void on_inputFileDecoder_textChanged();
 
-    void on_dec_destPath_textChanged();
+    void on_destinationDecoder_textChanged();
 
     void on_dec_inputButton_clicked();
 

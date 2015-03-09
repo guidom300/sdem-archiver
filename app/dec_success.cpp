@@ -14,13 +14,14 @@ Dec_success::Dec_success(QString input, QString output, int nThreads, QWidget *p
     QDialog(parent),
     ui(new Ui::Dec_success),
     running(true),
-    clock(new std::thread(dec_timeUpgrade, &currentTime, ui, &running)),
+    clock(new std::thread(dec_timeUpgrade, this)),
     encoder(new std::thread(dec_start, input, output, nThreads, &running))
 {
     ui->setupUi(this);
     ui->dec_pushButton->setDisabled(true);
-    ui->dec_labelSuccess->setText("");
     ui->dec_lcd->display(0);
+
+    this->adjustSize();
 }
 
 Dec_success::~Dec_success()
@@ -35,17 +36,17 @@ Dec_success::~Dec_success()
 }
 
 
-void Dec_success::dec_timeUpgrade(QTime* currentTime, Ui::Dec_success *ui, bool* running)
+void Dec_success::dec_timeUpgrade(Dec_success* dialog)
 {
-    currentTime->start();
-    while(*running)
+    dialog->currentTime.start();
+    while(dialog->running)
     {
         std::this_thread::sleep_for (std::chrono::milliseconds(10));
-        ui->dec_lcd->display(currentTime->elapsed());
+        dialog->ui->dec_lcd->display(dialog->currentTime.elapsed());
     }
 
-    ui->dec_labelSuccess->setText("File decoded successfully!");
-    ui->dec_pushButton->setEnabled(true);
+    dialog->setWindowTitle("File decoded successfully!");
+    dialog->ui->dec_pushButton->setEnabled(true);
 }
 
 void Dec_success::dec_start(QString input, QString output, int nThreads, bool* running)

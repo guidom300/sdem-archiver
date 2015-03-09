@@ -14,13 +14,14 @@ Success::Success(QString input, QString output, int nThreads, bool dictType, QWi
     QDialog(parent),
     ui(new Ui::Success),
     running(true),
-    clockThread(new std::thread(timeUpgrade, &currentTime, ui, &running, input, output)),
+    clockThread(new std::thread(timeUpgrade, this, input, output)),
     startEncoder(new std::thread(start, input, output, nThreads, dictType, &running))
 {
     ui->setupUi(this);
     ui->pushButton->setDisabled(true);
-    ui->labelSuccess->setText("");
     ui->lcd->display(0);
+
+    this->adjustSize();
 }
 
 Success::~Success()
@@ -39,21 +40,21 @@ void Success::on_pushButton_clicked()
     this->close();
 }
 
-void Success::timeUpgrade(QTime* currentTime, Ui::Success *ui, bool* running, QString input, QString output)
+void Success::timeUpgrade(Success* dialog, QString input, QString output)
 {
-    currentTime->start();
-    while(*running)
+    dialog->currentTime.start();
+    while(dialog->running)
     {
         std::this_thread::sleep_for (std::chrono::milliseconds(10));
-        ui->lcd->display(currentTime->elapsed());
+        dialog->ui->lcd->display(dialog->currentTime.elapsed());
     }
 
-    ui->labelSuccess->setText("File compressed successfully!");
-    ui->pushButton->setEnabled(true);
+    dialog->setWindowTitle("File compressed successfully!");
+    dialog->ui->pushButton->setEnabled(true);
     QFileInfo fi(input);
     QFileInfo fo(output);
     float compressionRatio = ((float)fo.size() / (float)fi.size()) * 100;
-    ui->lcd_2->display(compressionRatio);
+    dialog->ui->lcd_2->display(compressionRatio);
 }
 
 void Success::start(QString input, QString output, int nThreads, bool dictType, bool* running)

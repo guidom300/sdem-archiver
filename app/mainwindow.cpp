@@ -18,16 +18,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->naive->setChecked(true);
     ui->spinBox->setValue(4);   //default
     ui->pushButton_3->setEnabled(false);
-    ui->textBrowser->setText(QDir::homePath());
+    ui->destinationEncoder->setText(QDir::homePath());
 
     //decoder
     ui->dec_startButton->setEnabled(false);
     ui->dec_threads->setValue(4);
-    ui->dec_destPath->setText(QDir::homePath());
+    ui->destinationDecoder->setText(QDir::homePath());
 
     setAcceptDrops(true);
 
-
+    this->adjustSize();
 }
 
 MainWindow::~MainWindow()
@@ -44,14 +44,14 @@ void MainWindow::on_pushButton_clicked()
                                                 QDir::homePath(),
                                                 QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
-    ui->textBrowser->setText(dir);
+    ui->destinationEncoder->setText(dir);
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
     //Choose file button
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QDir::homePath(), "All Files (*.*)");
-    ui->textBrowser_2->setText(filename);
+    ui->inputFileEncoder->setText(filename);
 }
 
 void MainWindow::on_pushButton_3_clicked()
@@ -64,8 +64,8 @@ void MainWindow::on_pushButton_3_clicked()
             dictType = true;
         }
 
-    QString filepath = ui->textBrowser_2->toPlainText();
-    QString directory = ui->textBrowser->toPlainText();
+    QString filepath = ui->inputFileEncoder->text();
+    QString directory = ui->destinationEncoder->text();
     QFileInfo fi(filepath);
     QString base = fi.baseName();
     QString suffix = fi.suffix();
@@ -102,42 +102,38 @@ void MainWindow::on_pushButton_3_clicked()
 }
 
 
-void MainWindow::on_textBrowser_2_textChanged()
+void MainWindow::on_inputFileEncoder_textChanged()
 {
-    if(!(ui->textBrowser_2->toPlainText().trimmed().isEmpty()))
-        if(!(ui->textBrowser->toPlainText().trimmed().isEmpty()))
+    if(!(ui->inputFileEncoder->text().trimmed().isEmpty()))
+        if(!(ui->destinationEncoder->text().trimmed().isEmpty()))
             ui->pushButton_3->setEnabled(true);
 }
 
-void MainWindow::on_textBrowser_textChanged()
+void MainWindow::on_destinationEncoder_textChanged()
 {
-    if(!(ui->textBrowser->toPlainText().trimmed().isEmpty()))
-        if(!(ui->textBrowser_2->toPlainText().trimmed().isEmpty()))
-            ui->pushButton_3->setEnabled(true);
+    on_inputFileEncoder_textChanged();
 }
 //fine encoder
 
 //decoder
-void MainWindow::on_dec_inputPath_textChanged()
+void MainWindow::on_inputFileDecoder_textChanged()
 {
-    if(!(ui->dec_inputPath->toPlainText().trimmed().isEmpty()))
-        if(!(ui->dec_destPath->toPlainText().trimmed().isEmpty()))
+    if(!(ui->inputFileDecoder->text().trimmed().isEmpty()))
+        if(!(ui->destinationDecoder->text().trimmed().isEmpty()))
             ui->dec_startButton->setEnabled(true);
 
 }
 
-void MainWindow::on_dec_destPath_textChanged()
+void MainWindow::on_destinationDecoder_textChanged()
 {
-    if(!(ui->dec_destPath->toPlainText().trimmed().isEmpty()))
-        if(!(ui->dec_inputPath->toPlainText().trimmed().isEmpty()))
-            ui->dec_startButton->setEnabled(true);
+    on_inputFileDecoder_textChanged();
 }
 
 void MainWindow::on_dec_inputButton_clicked()
 {
     //Choose file button
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose file to decode"), QDir::homePath(), "Enc Files(*.enc)");
-    ui->dec_inputPath->setText(filename);
+    ui->inputFileDecoder->setText(filename);
 }
 
 void MainWindow::on_dec_destButton_clicked()
@@ -147,7 +143,7 @@ void MainWindow::on_dec_destButton_clicked()
                                                     QDir::homePath(),
                                                     QFileDialog::ShowDirsOnly
                                                     | QFileDialog::DontResolveSymlinks);
-    ui->dec_destPath->setText(dir);
+    ui->destinationDecoder->setText(dir);
 }
 
 void MainWindow::on_dec_startButton_clicked()
@@ -155,8 +151,8 @@ void MainWindow::on_dec_startButton_clicked()
     //Start decoder button
     qint32 nThreads = ui->dec_threads->value();
 
-    QString filepath = ui->dec_inputPath->toPlainText();
-    QString directory = ui->dec_destPath->toPlainText();
+    QString filepath = ui->inputFileDecoder->text();
+    QString directory = ui->destinationDecoder->text();
     QFileInfo file(filepath);
     QString base = file.baseName();
     QString fileInput = filepath;
@@ -217,5 +213,5 @@ void MainWindow::dropEvent(QDropEvent *event)
     if (fileName.isEmpty())
         return;
 
-    ui->textBrowser_2->setText(fileName);
+    ui->inputFileEncoder->setText(fileName);
 }

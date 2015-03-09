@@ -28,7 +28,7 @@ private:
     std::thread *clock;
     std::thread *encoder;
 
-    static void dec_timeUpgrade(QTime* currentTime, Ui::Dec_success *ui, bool* running);
+    static void dec_timeUpgrade(Dec_success* dialog);
     static void dec_start(QString input, QString output, int nThreads, bool* running);
 };
 
