@@ -67,15 +67,16 @@ void MainWindow::on_pushButton_3_clicked()
     QString suffix = fi.suffix();
     QString outputName = QDir(directory).filePath(base+"."+suffix+".enc");
     QFileInfo output( outputName );
-    if((float)fi.size() <= 0)
+
+    if(!fi.exists())
     {
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::critical(this, "Error", filepath + " is empty. Choose another input file.",
-                                      QMessageBox::Ok);
-        if (reply == QMessageBox::Ok)
-        {
-            return;
-        }
+        QMessageBox::critical(this, "Error", filepath + " does not exist.",
+                              QMessageBox::Ok);
+    }
+    else if(fi.size() == 0)
+    {
+        QMessageBox::critical(this, "Error", filepath + " is empty. Choose another input file.",
+                              QMessageBox::Ok);
     }
     else
     {
@@ -100,9 +101,15 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_inputFileEncoder_textChanged()
 {
-    if(!(ui->inputFileEncoder->text().trimmed().isEmpty()))
-        if(!(ui->destinationEncoder->text().trimmed().isEmpty()))
-            ui->pushButton_3->setEnabled(true);
+    bool enabled = false;
+    QFileInfo inputFile(ui->inputFileEncoder->text());
+    QFileInfo destination(ui->destinationEncoder->text());
+
+    if(inputFile.isFile() && destination.isDir()) {
+        enabled = true;
+    }
+
+    ui->pushButton_3->setEnabled(enabled);
 }
 
 void MainWindow::on_destinationEncoder_textChanged()
@@ -114,11 +121,16 @@ void MainWindow::on_destinationEncoder_textChanged()
 //decoder
 void MainWindow::on_inputFileDecoder_textChanged()
 {
-    if(!(ui->inputFileDecoder->text().trimmed().isEmpty()))
-        if(!(ui->destinationDecoder->text().trimmed().isEmpty()))
-            ui->dec_startButton->setEnabled(true);
+    bool enabled = false;
+    QFileInfo inputFile(ui->inputFileDecoder->text());
+    QFileInfo destination(ui->destinationDecoder->text());
 
-}
+    if(inputFile.isFile() && destination.isDir()) {
+        enabled = inputFile.suffix() == "enc";
+    }
+
+    ui->dec_startButton->setEnabled(enabled);
+ }
 
 void MainWindow::on_destinationDecoder_textChanged()
 {
@@ -157,15 +169,16 @@ void MainWindow::on_dec_startButton_clicked()
     QString suffix = fi.suffix();
     QString outputName = QDir(directory).filePath(base+"."+suffix);
     QFileInfo output( outputName );
-    if((float)file.size() <= 0)
+
+    if(!fi.exists())
     {
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::critical(this, "Error", filepath + " is empty. Choose another input file.",
-                                      QMessageBox::Ok);
-        if (reply == QMessageBox::Ok)
-        {
-            return;
-        }
+        QMessageBox::critical(this, "Error", filepath + " does not exist.",
+                              QMessageBox::Ok);
+    }
+    else if(fi.size() == 0)
+    {
+        QMessageBox::critical(this, "Error", filepath + " is empty. Choose another input file.",
+                              QMessageBox::Ok);
     }
     else
     {
