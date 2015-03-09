@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidget->setTabText(1, "Decoder");
 
     //encoder
-    ui->naive->setChecked(true);
+    ui->bm->setChecked(true);
     ui->spinBox->setValue(4);   //default
     ui->pushButton_3->setEnabled(false);
     ui->destinationEncoder->setText(QDir::homePath());
@@ -58,11 +58,7 @@ void MainWindow::on_pushButton_3_clicked()
 {
     //Start button
     qint32 nThreads = ui->spinBox ->value();
-    bool dictType = false; //default naive
-    if(ui->bm->isChecked())
-        {
-            dictType = true;
-        }
+    bool dictType = ui->bm->isChecked();
 
     QString filepath = ui->inputFileEncoder->text();
     QString directory = ui->destinationEncoder->text();
