@@ -95,9 +95,9 @@ void MainWindow::on_pushButton_3_clicked()
 
         }
 
-        Success success(filepath, outputName, nThreads, dictType);
-        success.setModal(true);
-        success.exec();
+        EncoderProgressDialog dialog(filepath, outputName, nThreads, dictType);
+        dialog.setModal(true);
+        dialog.exec();
     }
 }
 
@@ -184,9 +184,9 @@ void MainWindow::on_dec_startButton_clicked()
             }
         }
 
-        Dec_success dec_success(filepath, outputName, nThreads);
-        dec_success.setModal(true);
-        dec_success.exec();
+        DecoderProgressDialog dialog(filepath, outputName, nThreads);
+        dialog.setModal(true);
+        dialog.exec();
     }
 }
 

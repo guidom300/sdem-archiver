@@ -1,5 +1,5 @@
-#include "success.h"
-#include "ui_success.h"
+#include "encoder_progress_dialog.h"
+#include "ui_encoder_progress_dialog.h"
 #include <QLCDNumber>
 #include <iostream>
 #include <fstream>
@@ -10,9 +10,9 @@
 
 using namespace std;
 
-Success::Success(QString input, QString output, int nThreads, bool dictType, QWidget *parent) :
+EncoderProgressDialog::EncoderProgressDialog(QString input, QString output, int nThreads, bool dictType, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Success),
+    ui(new Ui::EncoderProgressDialog),
     running(true),
     clockThread(new std::thread(timeUpgrade, this, input, output)),
     startEncoder(new std::thread(start, input, output, nThreads, dictType, &running))
@@ -24,7 +24,7 @@ Success::Success(QString input, QString output, int nThreads, bool dictType, QWi
     this->adjustSize();
 }
 
-Success::~Success()
+EncoderProgressDialog::~EncoderProgressDialog()
 {
     startEncoder->join();
     delete startEncoder;
@@ -35,12 +35,12 @@ Success::~Success()
     delete ui;
 }
 
-void Success::on_pushButton_clicked()
+void EncoderProgressDialog::on_pushButton_clicked()
 {
     this->close();
 }
 
-void Success::timeUpgrade(Success* dialog, QString input, QString output)
+void EncoderProgressDialog::timeUpgrade(EncoderProgressDialog* dialog, QString input, QString output)
 {
     dialog->currentTime.start();
     while(dialog->running)
@@ -57,7 +57,7 @@ void Success::timeUpgrade(Success* dialog, QString input, QString output)
     dialog->ui->lcd_2->display(compressionRatio);
 }
 
-void Success::start(QString input, QString output, int nThreads, bool dictType, bool* running)
+void EncoderProgressDialog::start(QString input, QString output, int nThreads, bool dictType, bool* running)
 {
     encode_in_parallel(input.toStdString().c_str(), output.toStdString().c_str(), nThreads, dictType);
 

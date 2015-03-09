@@ -10,19 +10,20 @@ TEMPLATE = app
 
 
 SOURCES += \
-    dec_success.cpp \
+    decoder_progress_dialog.cpp \
+    encoder_progress_dialog.cpp \
     main.cc \
     mainwindow.cpp \
-    parallel.cc \
-    success.cpp
+    parallel.cc
 
 HEADERS += \
     bit_reader.h \
     bit_writer.h \
     buffers.h \
     canonical_huffman_tree.h \
+    decoder_progress_dialog.h \
     decoder_wrapper.h \
-    dec_success.h \
+    encoder_progress_dialog.h \
     encoder_wrapper.h \
     huffman_decoder.h \
     huffman_decoder_stack.h \
@@ -41,15 +42,14 @@ HEADERS += \
     mainwindow.h \
     parallel.h \
     splitter.h \
-    success.h \
     tree_node.h \
     utils.h \
     worker.h
 
 FORMS += \
-    dec_success.ui \
-    mainwindow.ui \
-    success.ui
+    decoder_progress_dialog.ui \
+    encoder_progress_dialog.ui \
+    mainwindow.ui
 
 include(../common.pri)
 

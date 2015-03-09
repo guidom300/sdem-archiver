@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dec_success</class>
- <widget class="QDialog" name="Dec_success">
+ <class>EncoderProgressDialog</class>
+ <widget class="QDialog" name="EncoderProgressDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>395</width>
-    <height>134</height>
+    <width>435</width>
+    <height>183</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,24 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLCDNumber" name="dec_lcd">
+      <widget class="QLCDNumber" name="lcd">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Compression Ratio (%)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLCDNumber" name="lcd_2">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -36,9 +53,15 @@
     </layout>
    </item>
    <item row="1" column="0" alignment="Qt::AlignHCenter">
-    <widget class="QPushButton" name="dec_pushButton">
+    <widget class="QPushButton" name="pushButton">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="maximumSize">
       <size>

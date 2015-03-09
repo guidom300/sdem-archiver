@@ -8,28 +8,28 @@
 
 
 namespace Ui {
-class Success;
+class EncoderProgressDialog;
 }
 
-class Success : public QDialog
+class EncoderProgressDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Success(QString input, QString output, int nThreads, bool dictType, QWidget *parent = 0);
-    ~Success();
+    explicit EncoderProgressDialog(QString input, QString output, int nThreads, bool dictType, QWidget *parent = 0);
+    ~EncoderProgressDialog();
 
 private slots:
     void on_pushButton_clicked();
 
 private:
-    Ui::Success *ui;
+    Ui::EncoderProgressDialog *ui;
     bool running;
     QTime currentTime;
     std::thread *clockThread;
     std::thread *startEncoder;
 
-    static void timeUpgrade(Success* dialog, QString input, QString output);
+    static void timeUpgrade(EncoderProgressDialog* dialog, QString input, QString output);
     static void start(QString input, QString output, int nThreads, bool dictType, bool* running);
 
 };

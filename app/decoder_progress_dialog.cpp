@@ -1,5 +1,5 @@
-#include "dec_success.h"
-#include "ui_dec_success.h"
+#include "decoder_progress_dialog.h"
+#include "ui_decoder_progress_dialog.h"
 #include <QLCDNumber>
 #include <iostream>
 #include <fstream>
@@ -10,9 +10,9 @@
 
 using namespace std;
 
-Dec_success::Dec_success(QString input, QString output, int nThreads, QWidget *parent) :
+DecoderProgressDialog::DecoderProgressDialog(QString input, QString output, int nThreads, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Dec_success),
+    ui(new Ui::DecoderProgressDialog),
     running(true),
     clock(new std::thread(dec_timeUpgrade, this)),
     encoder(new std::thread(dec_start, input, output, nThreads, &running))
@@ -24,7 +24,7 @@ Dec_success::Dec_success(QString input, QString output, int nThreads, QWidget *p
     this->adjustSize();
 }
 
-Dec_success::~Dec_success()
+DecoderProgressDialog::~DecoderProgressDialog()
 {
     encoder->join();
     delete encoder;
@@ -36,7 +36,7 @@ Dec_success::~Dec_success()
 }
 
 
-void Dec_success::dec_timeUpgrade(Dec_success* dialog)
+void DecoderProgressDialog::dec_timeUpgrade(DecoderProgressDialog* dialog)
 {
     dialog->currentTime.start();
     while(dialog->running)
@@ -49,14 +49,14 @@ void Dec_success::dec_timeUpgrade(Dec_success* dialog)
     dialog->ui->dec_pushButton->setEnabled(true);
 }
 
-void Dec_success::dec_start(QString input, QString output, int nThreads, bool* running)
+void DecoderProgressDialog::dec_start(QString input, QString output, int nThreads, bool* running)
 {
     decode_in_parallel(input.toStdString().c_str(), output.toStdString().c_str(), nThreads);
 
     *running = false;
 }
 
-void Dec_success::on_dec_pushButton_clicked()
+void DecoderProgressDialog::on_dec_pushButton_clicked()
 {
     this->close();
 }

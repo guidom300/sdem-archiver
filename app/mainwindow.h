@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 #include <QtGui>
-#include "success.h"
-#include "dec_success.h"
+#include "encoder_progress_dialog.h"
+#include "decoder_progress_dialog.h"
 
 namespace Ui {
 class MainWindow;
